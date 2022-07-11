@@ -34,10 +34,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class DataProvider {
-    private static final Snapshot DISCONNECTED = new Snapshot(0, 1024, Collections.emptyList(), 0, new Histogram(2));
+    //default Snapshot as version 2
+    private static final Snapshot DISCONNECTED = new Snapshot(0, 1024, 2, Collections.emptyList(), 0, new Histogram(2));
     private final DataConnector connector;
 
     private int maxRegions;
+    private long protocolVersion;
     private long maxSize;
     private LongMonitor[] data;
     private LongMonitor status;
@@ -50,6 +52,14 @@ public class DataProvider {
     private void setMonitoredVm(MonitoredVm vm) {
         LongMonitor max_regions_mon = getMonitor(vm,"sun.gc.shenandoah.regions.max_regions");
         maxRegions = (int) max_regions_mon.longValue();
+        //Reads in the version of the garbage collector
+        LongMonitor protocol_version_mon = getMonitor(vm, "sun.gc.shenandoah.regions.protocol_version");
+        if (protocol_version_mon == null) {
+            protocolVersion = 1;
+        } else {
+            protocolVersion = protocol_version_mon.longValue();
+        }
+        //System.out.println("The version of the Shenandoah is " + protocolVersion);
         LongMonitor max_size_mon = getMonitor(vm,"sun.gc.shenandoah.regions.region_size");
         maxSize = max_size_mon.longValue();
         status = getMonitor(vm, "sun.gc.shenandoah.regions.status");
@@ -92,7 +102,8 @@ public class DataProvider {
         // These histograms are not thread safe so we pass a copy here. Also, if
         // we ever add a feature to 'replay' sessions, we'll not want these snapshots
         // sharing a histogram.
-        return new Snapshot(time, maxSize, stats, (int) status.longValue(), connector.getPauseHistogram());
+        //adding version to the Snapshot
+        return new Snapshot(time, maxSize, protocolVersion, stats, (int) status.longValue(), connector.getPauseHistogram());
     }
 
     protected void stopConnector() {
