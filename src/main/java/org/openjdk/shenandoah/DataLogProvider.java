@@ -62,11 +62,13 @@ import java.util.concurrent.TimeUnit;
 
 public class DataLogProvider {
     //default Snapshot as version 2
-    private static final Snapshot DISCONNECTED = new Snapshot(0, 1024, 2, Collections.emptyList(), 0, null);
+    private static final long LATEST_VERSION = 2;
+    private static final Snapshot DISCONNECTED = new Snapshot(0, 1024, LATEST_VERSION, Collections.emptyList(), 0, null);
 
     private static final String START = "START";
     private static final String STOP = "STOP";
     private static final String CLEAR = "CLEAR";
+
 
     private List<Snapshot> snapshots;
     private HashMap<Long, Integer> snapshotsIndexByTime;
@@ -74,7 +76,6 @@ public class DataLogProvider {
     private int snapshotsIndex = -1;
     private Snapshot currSnapshot = DISCONNECTED;
 
-    private long LATEST_VERSION = 2;
 
     public DataLogProvider(String path) throws IOException, NumberFormatException {
         String filePath = path;

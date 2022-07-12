@@ -35,7 +35,9 @@ import java.util.List;
 
 public class DataProvider {
     //default Snapshot as version 2
-    private static final Snapshot DISCONNECTED = new Snapshot(0, 1024, 2, Collections.emptyList(), 0, new Histogram(2));
+    private static final long ORIGINAL_VERSION = 1;
+    private static final long LATEST_VERSION = 2;
+    private static final Snapshot DISCONNECTED = new Snapshot(0, 1024, LATEST_VERSION, Collections.emptyList(), 0, new Histogram(2));
     private final DataConnector connector;
 
     private int maxRegions;
@@ -44,7 +46,7 @@ public class DataProvider {
     private LongMonitor[] data;
     private LongMonitor status;
 
-    private long ORIGINAL_VERSION = 1;
+
 
     public DataProvider(String id) {
         connector = new DataConnector(this::setMonitoredVm);
