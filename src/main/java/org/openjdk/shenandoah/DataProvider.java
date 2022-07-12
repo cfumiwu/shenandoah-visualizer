@@ -44,6 +44,8 @@ public class DataProvider {
     private LongMonitor[] data;
     private LongMonitor status;
 
+    private long ORIGINAL_VERSION = 1;
+
     public DataProvider(String id) {
         connector = new DataConnector(this::setMonitoredVm);
         connector.start();
@@ -55,7 +57,7 @@ public class DataProvider {
         //Reads in the version of the garbage collector
         LongMonitor protocol_version_mon = getMonitor(vm, "sun.gc.shenandoah.regions.protocol_version");
         if (protocol_version_mon == null) {
-            protocolVersion = 1;
+            protocolVersion = ORIGINAL_VERSION;
         } else {
             protocolVersion = protocol_version_mon.longValue();
         }

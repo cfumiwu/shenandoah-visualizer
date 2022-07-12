@@ -74,6 +74,8 @@ public class DataLogProvider {
     private int snapshotsIndex = -1;
     private Snapshot currSnapshot = DISCONNECTED;
 
+    private long LATEST_VERSION = 2;
+
     public DataLogProvider(String path) throws IOException, NumberFormatException {
         String filePath = path;
         if (!isValidPath(filePath)) {
@@ -83,7 +85,7 @@ public class DataLogProvider {
         this.snapshots = new ArrayList<>();
         this.snapshotsIndexByTime = new HashMap<>();
         int index = 0;
-        long protocolVersion = 2;
+        long protocolVersion = LATEST_VERSION;
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String metaDataLine = br.readLine(); // timestamp status numRegions regionSize
