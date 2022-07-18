@@ -73,6 +73,19 @@ public class RegionStat {
         this.affiliation = RegionAffiliation.YOUNG;
         this.showLivenessDetail = Boolean.getBoolean("show.liveness");
     }
+    //This constructor is for CounterTest
+    public RegionStat(float usedLvl, float liveLvl, float tlabLvl, float gclabLvl, float plabLvl, float sharedLvl, RegionAffiliation affiliation,RegionState state) {
+        this.usedLvl = usedLvl;
+        this.liveLvl = liveLvl;
+        this.tlabLvl = tlabLvl;
+        this.gclabLvl = gclabLvl;
+        this.plabLvl = plabLvl;
+        this.sharedLvl = sharedLvl;
+        this.state = state;
+        this.age = -1;
+        this.affiliation = affiliation;
+        this.showLivenessDetail = Boolean.getBoolean("show.liveness");
+    }
 
     // Also only used for the legend.
     public RegionStat(RegionState state, int age) {
@@ -317,8 +330,11 @@ public class RegionStat {
 
     public float plabAllocs() { return plabLvl; }
 
-    public float maxLvlAllocs() {
-        return Collections.max(Arrays.asList(tlabLvl, gclabLvl, plabLvl, sharedLvl));
+    public float maxLvlAllocsYoung() {
+        return Collections.max(Arrays.asList(tlabLvl, gclabLvl, sharedLvl));
+    }
+    public float maxLvlAllocsOld() {
+        return Collections.max(Arrays.asList(plabLvl, sharedLvl));
     }
 
     public float sharedAllocs() {

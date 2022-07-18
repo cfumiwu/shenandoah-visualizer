@@ -305,32 +305,45 @@ public class Snapshot {
     }
     public int tlabCounter() {
         for (RegionStat rs : stats) {
-            if (rs.maxLvlAllocs() == rs.tlabAllocs()) {
-                tlabCount++;
+            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
+                if (rs.maxLvlAllocsYoung() == rs.tlabAllocs()) {
+                    tlabCount++;
+                }
             }
         }
         return tlabCount;
     }
     public int gclabCounter() {
         for (RegionStat rs : stats) {
-            if (rs.maxLvlAllocs() == rs.gclabAllocs()) {
-                gclabCount++;
+            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
+                if ((rs.maxLvlAllocsYoung() == rs.gclabAllocs()) && (rs.maxLvlAllocsYoung() > rs.tlabAllocs())) {
+                    gclabCount++;
+                }
             }
         }
         return gclabCount;
     }
     public int plabCounter() {
         for (RegionStat rs : stats) {
-            if (rs.maxLvlAllocs() == rs.plabAllocs()) {
-                plabCount++;
+            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
+                if (rs.maxLvlAllocsOld() == rs.plabAllocs()) {
+                    plabCount++;
+                }
             }
         }
         return plabCount;
     }
     public int sharedCounter() {
         for (RegionStat rs : stats) {
-            if (rs.maxLvlAllocs() == rs.sharedAllocs()) {
-                sharedCount++;
+            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
+                if (((rs.maxLvlAllocsYoung() == rs.sharedAllocs()) && (rs.maxLvlAllocsYoung() > rs.tlabAllocs()) && (rs.maxLvlAllocsYoung() > rs.gclabAllocs()))) {
+                    sharedCount++;
+                }
+            }
+            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
+                if ((rs.maxLvlAllocsOld() == rs.sharedAllocs()) && (rs.maxLvlAllocsOld() > rs.plabAllocs())) {
+                    sharedCount++;
+                }
             }
         }
         return sharedCount;

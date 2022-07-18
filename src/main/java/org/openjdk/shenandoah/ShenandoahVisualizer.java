@@ -401,25 +401,25 @@ class ShenandoahVisualizer {
             items.put("Trash",
                     new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, TRASH));
 
-            items.put("Fully Live, 100% TLAB Allocs",
+            items.put("TLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
 
 //            items.put("0% Live, 100% TLAB Allocs",
 //                    new RegionStat(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
 
-            items.put("Fully Live, 100% GCLAB Allocs",
+            items.put("GCLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, REGULAR));
 
 //            items.put("0% Live, 100% GCLAB Allocs",
 //                    new RegionStat(1.0f, 0.0f, 0.0f, 1.0f, 0.0f,0.0f, REGULAR));
 
-            items.put("Fully Live, 100% PLAB Allocs",
+            items.put("PLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, REGULAR));
 
 //            items.put("0% Live, 100% PLAB Allocs",
 //                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 1.0f,0.0f, REGULAR));
 
-            items.put("Fully Live, 100% Shared Allocs",
+            items.put("Shared Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, REGULAR));
 
 //            items.put("0% Live, 100% Shared Allocs",
@@ -431,19 +431,19 @@ class ShenandoahVisualizer {
 //            items.put("Fully Live, 25%/25%/25%/25% T/GC/P/S Allocs",
 //                    new RegionStat(1.0f, 1.0f, 1f/4, 1f/4, 1f/4, 1f/4, REGULAR));
 
-            items.put("Fully Live Humongous",
+            items.put("Humongous",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, HUMONGOUS));
 
-            items.put("Fully Live Humongous + Pinned",
+            items.put("Humongous + Pinned",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, PINNED_HUMONGOUS));
 
-            items.put("1/3 Live + Collection Set",
+            items.put("Collection Set",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, CSET));
 
-            items.put("1/3 Live + Pinned",
+            items.put("Pinned",
                     new RegionStat(1.0f, 1.0f, 0.3f, 0.0f, 0.0f, 0.0f, PINNED));
 
-            items.put("1/3 Live + Pinned CSet",
+            items.put("Pinned CSet",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, PINNED_CSET));
 
             items.put("Age 0+", new RegionStat(REGULAR, 0));
@@ -460,23 +460,23 @@ class ShenandoahVisualizer {
 
             summary_numbers.put("Trash", new Integer(snapshot.trashCounter()));
 
-            summary_numbers.put("Fully Live, 100% TLAB Allocs", new Integer(snapshot.tlabCounter()));
+            summary_numbers.put("TLAB Allocs", new Integer(snapshot.tlabCounter()));
 
-            summary_numbers.put("Fully Live, 100% GCLAB Allocs", new Integer(snapshot.gclabCounter()));
+            summary_numbers.put("GCLAB Allocs", new Integer(snapshot.gclabCounter()));
 
-            summary_numbers.put("Fully Live, 100% PLAB Allocs", new Integer(snapshot.plabCounter()));
+            summary_numbers.put("PLAB Allocs", new Integer(snapshot.plabCounter()));
 
-            summary_numbers.put("Fully Live, 100% Shared Allocs", new Integer(snapshot.sharedCounter()));
+            summary_numbers.put("Shared Allocs", new Integer(snapshot.sharedCounter()));
 
-            summary_numbers.put("Fully Live Humongous", new Integer(snapshot.humongousCounter()));
+            summary_numbers.put("Humongous", new Integer(snapshot.humongousCounter()));
 
-            summary_numbers.put("Fully Live Humongous + Pinned", new Integer(snapshot.pinnedHumongousCounter()));
+            summary_numbers.put("Humongous + Pinned", new Integer(snapshot.pinnedHumongousCounter()));
 
-            summary_numbers.put("1/3 Live + Collection Set", new Integer(snapshot.cSetCounter()));
+            summary_numbers.put("Collection Set", new Integer(snapshot.cSetCounter()));
 
-            summary_numbers.put("1/3 Live + Pinned", new Integer(snapshot.pinnedCounter()));
+            summary_numbers.put("Pinned", new Integer(snapshot.pinnedCounter()));
 
-            summary_numbers.put("1/3 Live + Pinned CSet", new Integer(snapshot.pinnedCSetCounter()));
+            summary_numbers.put("Pinned CSet", new Integer(snapshot.pinnedCSetCounter()));
 
             summary_numbers.put("Age 0+", new Integer(snapshot.age0Counter()));
             summary_numbers.put("Age 3+", new Integer(snapshot.age3Counter()));
