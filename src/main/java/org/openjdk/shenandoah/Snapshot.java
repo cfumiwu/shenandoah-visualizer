@@ -75,6 +75,25 @@ public class Snapshot {
     private final boolean fullActive;
     private final Histogram histogram;
 
+    private int emptyUncommittedCount = 0;
+    private int emptyCommittedCount = 0;
+    private int trashCount = 0;
+    private int tlabCount = 0;
+    private int gclabCount = 0;
+    private int plabCount = 0;
+    private int sharedCount = 0;
+    private int humongousCount = 0;
+    private int pinnedHumongousCount = 0;
+    private int cSetCount = 0;
+    private int pinnedCount = 0;
+    private int pinnedCSetCount = 0;
+    private int age0Count = 0;
+    private int age3Count = 0;
+    private int age6Count = 0;
+    private int age9Count = 0;
+    private int age12Count = 0;
+    private int age15Count = 0;
+
     public Snapshot(long time, long regionSize, long protocolVersion, List<RegionStat> stats, int status, Histogram histogram) {
         this.time = time;
         this.regionSize = regionSize;
@@ -259,5 +278,149 @@ public class Snapshot {
         System.out.printf("cset: %s old/ %s cset total: %s old/ %s total\n",
                 old_in_cset, total_in_cset, old, total);
         return total_in_cset == 0 ? 0 : ((double) (old_in_cset)) / total_in_cset;
+    }
+    public int emptyUncommittedCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.EMPTY_UNCOMMITTED) {
+                emptyUncommittedCount++;
+            }
+        }
+        return emptyUncommittedCount;
+    }
+    public int emptyCommittedCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.EMPTY_COMMITTED) {
+                emptyCommittedCount++;
+            }
+        }
+        return emptyCommittedCount;
+    }
+    public int trashCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.TRASH) {
+                trashCount++;
+            }
+        }
+        return trashCount;
+    }
+    public int tlabCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.maxLvlAllocs() == rs.tlabAllocs()) {
+                tlabCount++;
+            }
+        }
+        return tlabCount;
+    }
+    public int gclabCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.maxLvlAllocs() == rs.gclabAllocs()) {
+                gclabCount++;
+            }
+        }
+        return gclabCount;
+    }
+    public int plabCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.maxLvlAllocs() == rs.plabAllocs()) {
+                plabCount++;
+            }
+        }
+        return plabCount;
+    }
+    public int sharedCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.maxLvlAllocs() == rs.sharedAllocs()) {
+                sharedCount++;
+            }
+        }
+        return sharedCount;
+    }
+    public int humongousCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.HUMONGOUS) {
+                humongousCount++;
+            }
+        }
+        return humongousCount;
+    }
+    public int pinnedHumongousCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.PINNED_HUMONGOUS) {
+                pinnedHumongousCount++;
+            }
+        }
+        return pinnedHumongousCount;
+    }
+    public int cSetCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.CSET) {
+                cSetCount++;
+            }
+        }
+        return cSetCount;
+    }
+    public int pinnedCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.PINNED) {
+                pinnedCount++;
+            }
+        }
+        return pinnedCount;
+    }
+    public int pinnedCSetCounter() {
+        for (RegionStat rs : stats) {
+            if (rs.state() == RegionState.PINNED_CSET) {
+                pinnedCSetCount++;
+            }
+        }
+        return pinnedCSetCount;
+    }
+    public int age0Counter() {
+        for (RegionStat rs : stats) {
+            if (rs.age() >= 0 && rs.age() < 3) {
+                age0Count++;
+            }
+        }
+        return age0Count;
+    }
+    public int age3Counter() {
+        for (RegionStat rs : stats) {
+            if (rs.age() >= 3  && rs.age() < 6) {
+                age3Count++;
+            }
+        }
+        return age3Count;
+    }
+    public int age6Counter() {
+        for (RegionStat rs : stats) {
+            if (rs.age() >= 6  && rs.age() < 9) {
+                age6Count++;
+            }
+        }
+        return age6Count;
+    }
+    public int age9Counter() {
+        for (RegionStat rs : stats) {
+            if (rs.age() >= 9  && rs.age() < 12) {
+                age9Count++;
+            }
+        }
+        return age9Count;
+    }
+    public int age12Counter() {
+        for (RegionStat rs : stats) {
+            if (rs.age() >= 12  && rs.age() < 15) {
+                age12Count++;
+            }
+        }
+        return age12Count;
+    }
+    public int age15Counter() {
+        for (RegionStat rs : stats) {
+            if (rs.age() >= 15) {
+                age15Count++;
+            }
+        }
+        return age15Count;
     }
 }

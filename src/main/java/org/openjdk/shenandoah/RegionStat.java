@@ -25,6 +25,8 @@
 package org.openjdk.shenandoah;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.openjdk.shenandoah.Colors.*;
 
@@ -313,6 +315,12 @@ public class RegionStat {
         return gclabLvl;
     }
 
+    public float plabAllocs() { return plabLvl; }
+
+    public float maxLvlAllocs() {
+        return Collections.max(Arrays.asList(tlabLvl, gclabLvl, plabLvl, sharedLvl));
+    }
+
     public float sharedAllocs() {
         return sharedLvl;
     }
@@ -320,4 +328,5 @@ public class RegionStat {
     public RegionState state() {
         return state;
     }
+    public long age() { return age; }
 }

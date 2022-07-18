@@ -134,7 +134,7 @@ class ShenandoahVisualizer {
         JPanel legendPanel = new JPanel() {
             @Override
             public void paint(Graphics g) {
-                Render.renderLegend(g);
+                renderRunner.renderLegend(g);
             }
         };
 
@@ -354,7 +354,7 @@ class ShenandoahVisualizer {
     }
 
     public abstract static class Render {
-        public static final int LINE = 20;
+        public static final int LINE = 15;
 
         final JFrame frame;
 
@@ -387,7 +387,7 @@ class ShenandoahVisualizer {
 
         public abstract void renderStats(Graphics g);
 
-        public synchronized static void renderLegend(Graphics g) {
+        public synchronized void renderLegend(Graphics g) { //delete the static
             final int sqSize = LINE;
 
             Map<String, RegionStat> items = new LinkedHashMap<>();
@@ -404,32 +404,32 @@ class ShenandoahVisualizer {
             items.put("Fully Live, 100% TLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
 
-            items.put("0% Live, 100% TLAB Allocs",
-                    new RegionStat(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
+//            items.put("0% Live, 100% TLAB Allocs",
+//                    new RegionStat(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
 
             items.put("Fully Live, 100% GCLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, REGULAR));
 
-            items.put("0% Live, 100% GCLAB Allocs",
-                    new RegionStat(1.0f, 0.0f, 0.0f, 1.0f, 0.0f,0.0f, REGULAR));
+//            items.put("0% Live, 100% GCLAB Allocs",
+//                    new RegionStat(1.0f, 0.0f, 0.0f, 1.0f, 0.0f,0.0f, REGULAR));
 
             items.put("Fully Live, 100% PLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, REGULAR));
 
-            items.put("0% Live, 100% PLAB Allocs",
-                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 1.0f,0.0f, REGULAR));
+//            items.put("0% Live, 100% PLAB Allocs",
+//                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 1.0f,0.0f, REGULAR));
 
             items.put("Fully Live, 100% Shared Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, REGULAR));
 
-            items.put("0% Live, 100% Shared Allocs",
-                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, REGULAR));
+//            items.put("0% Live, 100% Shared Allocs",
+//                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, REGULAR));
 
-            items.put("Fully Live, 50%/50% TLAB/GCLAB Allocs",
-                    new RegionStat(1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 0.0f, REGULAR));
+//            items.put("Fully Live, 50%/50% TLAB/GCLAB Allocs",
+//                    new RegionStat(1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 0.0f, REGULAR));
 
-            items.put("Fully Live, 25%/25%/25%/25% T/GC/P/S Allocs",
-                    new RegionStat(1.0f, 1.0f, 1f/4, 1f/4, 1f/4, 1f/4, REGULAR));
+//            items.put("Fully Live, 25%/25%/25%/25% T/GC/P/S Allocs",
+//                    new RegionStat(1.0f, 1.0f, 1f/4, 1f/4, 1f/4, 1f/4, REGULAR));
 
             items.put("Fully Live Humongous",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, HUMONGOUS));
@@ -438,13 +438,13 @@ class ShenandoahVisualizer {
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, PINNED_HUMONGOUS));
 
             items.put("1/3 Live + Collection Set",
-                    new RegionStat(1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, CSET));
+                    new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, CSET));
 
             items.put("1/3 Live + Pinned",
-                    new RegionStat(1.0f, 0.3f, 0.3f, 0.0f, 0.0f, 0.0f, PINNED));
+                    new RegionStat(1.0f, 1.0f, 0.3f, 0.0f, 0.0f, 0.0f, PINNED));
 
             items.put("1/3 Live + Pinned CSet",
-                    new RegionStat(1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, PINNED_CSET));
+                    new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, PINNED_CSET));
 
             items.put("Age 0+", new RegionStat(REGULAR, 0));
             items.put("Age 3+", new RegionStat(REGULAR, 3));
@@ -453,12 +453,43 @@ class ShenandoahVisualizer {
             items.put("Age 12+", new RegionStat(REGULAR, 12));
             items.put("Age 15+", new RegionStat(REGULAR, 15));
 
+            Map<String, Integer> summary_numbers = new LinkedHashMap<>();
+            summary_numbers.put("Empty Uncommitted", new Integer(snapshot.emptyUncommittedCounter()));
+
+            summary_numbers.put("Empty Committed", new Integer(snapshot.emptyCommittedCounter()));
+
+            summary_numbers.put("Trash", new Integer(snapshot.trashCounter()));
+
+            summary_numbers.put("Fully Live, 100% TLAB Allocs", new Integer(snapshot.tlabCounter()));
+
+            summary_numbers.put("Fully Live, 100% GCLAB Allocs", new Integer(snapshot.gclabCounter()));
+
+            summary_numbers.put("Fully Live, 100% PLAB Allocs", new Integer(snapshot.plabCounter()));
+
+            summary_numbers.put("Fully Live, 100% Shared Allocs", new Integer(snapshot.sharedCounter()));
+
+            summary_numbers.put("Fully Live Humongous", new Integer(snapshot.humongousCounter()));
+
+            summary_numbers.put("Fully Live Humongous + Pinned", new Integer(snapshot.pinnedHumongousCounter()));
+
+            summary_numbers.put("1/3 Live + Collection Set", new Integer(snapshot.cSetCounter()));
+
+            summary_numbers.put("1/3 Live + Pinned", new Integer(snapshot.pinnedCounter()));
+
+            summary_numbers.put("1/3 Live + Pinned CSet", new Integer(snapshot.pinnedCSetCounter()));
+
+            summary_numbers.put("Age 0+", new Integer(snapshot.age0Counter()));
+            summary_numbers.put("Age 3+", new Integer(snapshot.age3Counter()));
+            summary_numbers.put("Age 6+", new Integer(snapshot.age6Counter()));
+            summary_numbers.put("Age 9+", new Integer(snapshot.age9Counter()));
+            summary_numbers.put("Age 12+", new Integer(snapshot.age12Counter()));
+            summary_numbers.put("Age 15+", new Integer(snapshot.age15Counter()));
             int i = 0;
             for (String key : items.keySet()) {
                 int y = (int) (i * sqSize * 1.5);
                 items.get(key).render(g, 0, y, sqSize, sqSize);
                 g.setColor(Color.BLACK);
-                g.drawString(key, (int) (sqSize * 1.5), y + sqSize);
+                g.drawString(key + " " + summary_numbers.get(key).toString(), (int) (sqSize * 1.5), y + sqSize);
                 i++;
             }
         }
@@ -974,6 +1005,13 @@ class ShenandoahVisualizer {
                 live.renderRegions(g);
             } else {
                 playback.renderRegions(g);
+            }
+        }
+        public synchronized void renderLegend(Graphics g) {
+            if (isLive) {
+                live.renderLegend(g);
+            } else {
+                playback.renderLegend(g);
             }
         }
 
