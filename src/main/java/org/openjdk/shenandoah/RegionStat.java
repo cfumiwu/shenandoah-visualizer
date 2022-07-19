@@ -330,10 +330,10 @@ public class RegionStat {
 
     public float plabAllocs() { return plabLvl; }
 
-    public float maxLvlAllocsYoung() {
+    public float maxAllocsYoung() {
         return Collections.max(Arrays.asList(tlabLvl, gclabLvl, sharedLvl));
     }
-    public float maxLvlAllocsOld() {
+    public float maxAllocsOld() {
         return Collections.max(Arrays.asList(plabLvl, sharedLvl));
     }
 

@@ -387,7 +387,7 @@ class ShenandoahVisualizer {
 
         public abstract void renderStats(Graphics g);
 
-        public synchronized void renderLegend(Graphics g) { //delete the static
+        public synchronized void renderLegend(Graphics g) {
             final int sqSize = LINE;
 
             Map<String, RegionStat> items = new LinkedHashMap<>();
@@ -404,32 +404,14 @@ class ShenandoahVisualizer {
             items.put("TLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
 
-//            items.put("0% Live, 100% TLAB Allocs",
-//                    new RegionStat(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, REGULAR));
-
             items.put("GCLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, REGULAR));
-
-//            items.put("0% Live, 100% GCLAB Allocs",
-//                    new RegionStat(1.0f, 0.0f, 0.0f, 1.0f, 0.0f,0.0f, REGULAR));
 
             items.put("PLAB Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, REGULAR));
 
-//            items.put("0% Live, 100% PLAB Allocs",
-//                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 1.0f,0.0f, REGULAR));
-
             items.put("Shared Allocs",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, REGULAR));
-
-//            items.put("0% Live, 100% Shared Allocs",
-//                    new RegionStat(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, REGULAR));
-
-//            items.put("Fully Live, 50%/50% TLAB/GCLAB Allocs",
-//                    new RegionStat(1.0f, 1.0f, 0.5f, 0.5f, 0.0f, 0.0f, REGULAR));
-
-//            items.put("Fully Live, 25%/25%/25%/25% T/GC/P/S Allocs",
-//                    new RegionStat(1.0f, 1.0f, 1f/4, 1f/4, 1f/4, 1f/4, REGULAR));
 
             items.put("Humongous",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, HUMONGOUS));

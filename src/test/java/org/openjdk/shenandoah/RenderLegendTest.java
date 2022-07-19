@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class RenderLegendTest {
-
 //    @Test
 //    public void test() throws IOException {
 //        BufferedImage img = new BufferedImage(300, 700, BufferedImage.TYPE_INT_RGB);

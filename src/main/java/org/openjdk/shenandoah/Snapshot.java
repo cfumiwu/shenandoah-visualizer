@@ -306,7 +306,7 @@ public class Snapshot {
     public int tlabCounter() {
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
-                if (rs.maxLvlAllocsYoung() == rs.tlabAllocs()) {
+                if (rs.maxAllocsYoung() == rs.tlabAllocs()) {
                     tlabCount++;
                 }
             }
@@ -316,7 +316,7 @@ public class Snapshot {
     public int gclabCounter() {
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
-                if ((rs.maxLvlAllocsYoung() == rs.gclabAllocs()) && (rs.maxLvlAllocsYoung() > rs.tlabAllocs())) {
+                if ((rs.maxAllocsYoung() == rs.gclabAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs())) {
                     gclabCount++;
                 }
             }
@@ -326,7 +326,7 @@ public class Snapshot {
     public int plabCounter() {
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
-                if (rs.maxLvlAllocsOld() == rs.plabAllocs()) {
+                if (rs.maxAllocsOld() == rs.plabAllocs()) {
                     plabCount++;
                 }
             }
@@ -336,12 +336,12 @@ public class Snapshot {
     public int sharedCounter() {
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
-                if (((rs.maxLvlAllocsYoung() == rs.sharedAllocs()) && (rs.maxLvlAllocsYoung() > rs.tlabAllocs()) && (rs.maxLvlAllocsYoung() > rs.gclabAllocs()))) {
+                if (((rs.maxAllocsYoung() == rs.sharedAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs()) && (rs.maxAllocsYoung() > rs.gclabAllocs()))) {
                     sharedCount++;
                 }
             }
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
-                if ((rs.maxLvlAllocsOld() == rs.sharedAllocs()) && (rs.maxLvlAllocsOld() > rs.plabAllocs())) {
+                if ((rs.maxAllocsOld() == rs.sharedAllocs()) && (rs.maxAllocsOld() > rs.plabAllocs())) {
                     sharedCount++;
                 }
             }
