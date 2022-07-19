@@ -104,7 +104,6 @@ public class CounterTest {
             stats_11.add(new RegionStat(1.0f, 1.0f, 0.7f, 0.8f, 0.9f, 0.5f, OLD, REGULAR));
             stats_12.add(new RegionStat(1.0f, 1.0f, 0.2f, 0.3f, 0.5f, 0.7f, YOUNG, REGULAR));
             stats_13.add(new RegionStat(1.0f, 1.0f, 0.2f, 0.9f, 0.5f, 0.7f, OLD, REGULAR));
-
         }
         snapshot_1= new Snapshot(0, 1024, 1, stats_1, 0, new Histogram(2));
         snapshot_2 = new Snapshot(0, 1024, 1, stats_2, 0, new Histogram(2));

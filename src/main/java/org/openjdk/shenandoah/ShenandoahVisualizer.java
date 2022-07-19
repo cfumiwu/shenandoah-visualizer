@@ -489,7 +489,7 @@ class ShenandoahVisualizer {
                 int y = (int) (i * sqSize * 1.5);
                 items.get(key).render(g, 0, y, sqSize, sqSize);
                 g.setColor(Color.BLACK);
-                g.drawString(key + " " + summary_numbers.get(key).toString(), (int) (sqSize * 1.5), y + sqSize);
+                g.drawString(key + " total: " + summary_numbers.get(key).toString(), (int) (sqSize * 1.5), y + sqSize);
                 i++;
             }
         }
