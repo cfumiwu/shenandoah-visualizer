@@ -33,14 +33,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class RenderLegendTest {
-//    @Test
-//    public void test() throws IOException {
-//        BufferedImage img = new BufferedImage(300, 700, BufferedImage.TYPE_INT_RGB);
-//        Graphics2D g = img.createGraphics();
-//        g.setColor(Color.WHITE);
-//        g.fillRect(0, 0, 300, 700);
-//        ShenandoahVisualizer.Render.renderLegend(g);
-//        ImageIO.write(img, "png", new File("legend.png"));
-//    }
+    @Test
+    public void test() throws IOException {
+        BufferedImage img = new BufferedImage(300, 700, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 300, 700);
+        new ShenandoahVisualizer.Render.renderLegend(g);
+        ImageIO.write(img, "png", new File("legend.png"));
+    }
 
 }

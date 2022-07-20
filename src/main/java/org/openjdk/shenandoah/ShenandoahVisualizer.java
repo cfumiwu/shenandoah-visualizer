@@ -436,6 +436,7 @@ class ShenandoahVisualizer {
             items.put("Age 15+", new RegionStat(REGULAR, 15));
 
             Map<String, Integer> summary_numbers = new LinkedHashMap<>();
+
             summary_numbers.put("Empty Uncommitted", new Integer(snapshot.emptyUncommittedCounter()));
 
             summary_numbers.put("Empty Committed", new Integer(snapshot.emptyCommittedCounter()));
@@ -530,6 +531,11 @@ class ShenandoahVisualizer {
         public synchronized void notifyGraphResized(int width, int height) {
             this.graphWidth = width;
             this.graphHeight = height;
+        }
+        //This class is for RenderLegendTest
+        public static class renderLegend {
+            public renderLegend(Graphics2D g) {
+            }
         }
     }
 
