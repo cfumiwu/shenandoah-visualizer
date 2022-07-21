@@ -75,24 +75,24 @@ public class Snapshot {
     private final boolean fullActive;
     private final Histogram histogram;
 
-    private int emptyUncommittedCount = 0;
-    private int emptyCommittedCount = 0;
-    private int trashCount = 0;
-    private int tlabCount = 0;
-    private int gclabCount = 0;
-    private int plabCount = 0;
-    private int sharedCount = 0;
-    private int humongousCount = 0;
-    private int pinnedHumongousCount = 0;
-    private int cSetCount = 0;
-    private int pinnedCount = 0;
-    private int pinnedCSetCount = 0;
-    private int age0Count = 0;
-    private int age3Count = 0;
-    private int age6Count = 0;
-    private int age9Count = 0;
-    private int age12Count = 0;
-    private int age15Count = 0;
+    private int emptyUncommittedCount;
+    private int emptyCommittedCount;
+    private int trashCount;
+    private int tlabCount;
+    private int gclabCount;
+    private int plabCount;
+    private int sharedCount;
+    private int humongousCount;
+    private int pinnedHumongousCount;
+    private int cSetCount;
+    private int pinnedCount;
+    private int pinnedCSetCount;
+    private int age0Count;
+    private int age3Count;
+    private int age6Count;
+    private int age9Count;
+    private int age12Count;
+    private int age15Count;
 
     public Snapshot(long time, long regionSize, long protocolVersion, List<RegionStat> stats, int status, Histogram histogram) {
         this.time = time;
@@ -280,6 +280,7 @@ public class Snapshot {
         return total_in_cset == 0 ? 0 : ((double) (old_in_cset)) / total_in_cset;
     }
     public int emptyUncommittedCounter() {
+        emptyUncommittedCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.EMPTY_UNCOMMITTED) {
                 emptyUncommittedCount++;
@@ -288,6 +289,7 @@ public class Snapshot {
         return emptyUncommittedCount;
     }
     public int emptyCommittedCounter() {
+        emptyCommittedCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.EMPTY_COMMITTED) {
                 emptyCommittedCount++;
@@ -296,6 +298,7 @@ public class Snapshot {
         return emptyCommittedCount;
     }
     public int trashCounter() {
+        trashCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.TRASH) {
                 trashCount++;
@@ -304,6 +307,7 @@ public class Snapshot {
         return trashCount;
     }
     public int tlabCounter() {
+        tlabCount = 0;
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
                 if (rs.maxAllocsYoung() == rs.tlabAllocs()) {
@@ -314,6 +318,7 @@ public class Snapshot {
         return tlabCount;
     }
     public int gclabCounter() {
+        gclabCount = 0;
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
                 if ((rs.maxAllocsYoung() == rs.gclabAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs())) {
@@ -324,6 +329,7 @@ public class Snapshot {
         return gclabCount;
     }
     public int plabCounter() {
+        plabCount = 0;
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
                 if (rs.maxAllocsOld() == rs.plabAllocs()) {
@@ -334,6 +340,7 @@ public class Snapshot {
         return plabCount;
     }
     public int sharedCounter() {
+        sharedCount = 0;
         for (RegionStat rs : stats) {
             if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
                 if (((rs.maxAllocsYoung() == rs.sharedAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs()) && (rs.maxAllocsYoung() > rs.gclabAllocs()))) {
@@ -349,6 +356,7 @@ public class Snapshot {
         return sharedCount;
     }
     public int humongousCounter() {
+        humongousCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.HUMONGOUS) {
                 humongousCount++;
@@ -357,6 +365,7 @@ public class Snapshot {
         return humongousCount;
     }
     public int pinnedHumongousCounter() {
+        pinnedHumongousCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.PINNED_HUMONGOUS) {
                 pinnedHumongousCount++;
@@ -365,6 +374,7 @@ public class Snapshot {
         return pinnedHumongousCount;
     }
     public int cSetCounter() {
+        cSetCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.CSET) {
                 cSetCount++;
@@ -373,6 +383,7 @@ public class Snapshot {
         return cSetCount;
     }
     public int pinnedCounter() {
+        pinnedCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.PINNED) {
                 pinnedCount++;
@@ -381,6 +392,7 @@ public class Snapshot {
         return pinnedCount;
     }
     public int pinnedCSetCounter() {
+        pinnedCSetCount = 0;
         for (RegionStat rs : stats) {
             if (rs.state() == RegionState.PINNED_CSET) {
                 pinnedCSetCount++;
@@ -389,6 +401,7 @@ public class Snapshot {
         return pinnedCSetCount;
     }
     public int age0Counter() {
+        age0Count = 0;
         for (RegionStat rs : stats) {
             if (rs.age() >= 0 && rs.age() < 3) {
                 age0Count++;
@@ -397,6 +410,7 @@ public class Snapshot {
         return age0Count;
     }
     public int age3Counter() {
+        age3Count = 0;
         for (RegionStat rs : stats) {
             if (rs.age() >= 3  && rs.age() < 6) {
                 age3Count++;
@@ -405,6 +419,7 @@ public class Snapshot {
         return age3Count;
     }
     public int age6Counter() {
+        age6Count = 0;
         for (RegionStat rs : stats) {
             if (rs.age() >= 6  && rs.age() < 9) {
                 age6Count++;
@@ -413,6 +428,7 @@ public class Snapshot {
         return age6Count;
     }
     public int age9Counter() {
+        age9Count = 0;
         for (RegionStat rs : stats) {
             if (rs.age() >= 9  && rs.age() < 12) {
                 age9Count++;
@@ -421,6 +437,7 @@ public class Snapshot {
         return age9Count;
     }
     public int age12Counter() {
+        age12Count = 0;
         for (RegionStat rs : stats) {
             if (rs.age() >= 12  && rs.age() < 15) {
                 age12Count++;
@@ -429,6 +446,7 @@ public class Snapshot {
         return age12Count;
     }
     public int age15Counter() {
+        age15Count = 0;
         for (RegionStat rs : stats) {
             if (rs.age() >= 15) {
                 age15Count++;

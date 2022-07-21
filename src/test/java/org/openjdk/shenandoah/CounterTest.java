@@ -118,7 +118,6 @@ public class CounterTest {
         snapshot_11 = new Snapshot(0, 1024, 1, stats_11, 0, new Histogram(2));
         snapshot_12 = new Snapshot(0, 1024, 1, stats_12, 0, new Histogram(2));
         snapshot_13 = new Snapshot(0, 1024, 1, stats_13, 0, new Histogram(2));
-
     }
 
     @Test
