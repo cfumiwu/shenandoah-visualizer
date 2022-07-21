@@ -532,11 +532,6 @@ class ShenandoahVisualizer {
             this.graphWidth = width;
             this.graphHeight = height;
         }
-        //This class is for RenderLegendTest
-        public static class renderLegend {
-            public renderLegend(Graphics2D g) {
-            }
-        }
     }
 
     public static class RenderLive extends Render {
