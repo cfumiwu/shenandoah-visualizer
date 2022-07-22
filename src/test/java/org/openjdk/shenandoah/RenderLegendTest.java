@@ -39,7 +39,7 @@ public class RenderLegendTest {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 300, 700);
-        new ShenandoahVisualizer.RenderPlayback(new DataLogProvider("/Users/cfumiwu/shenandoah-visualizer/regions-6425.log"), null).renderLegend(g);
+        new ShenandoahVisualizer.RenderPlayback(new DataLogProvider("regions-6425.log"), null).renderLegend(g);
         ImageIO.write(img, "png", new File("legend.png"));
     }
 
