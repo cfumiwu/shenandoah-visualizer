@@ -125,13 +125,21 @@ public class CounterTest {
         Assert.assertEquals(snapshot_4.getHumongousCount(), 10);
     }
     @Test
-    public void pinnedHumongousCounter_test() { Assert.assertEquals(snapshot_5.getPinnedHumongousCount(), 10); }
+    public void pinnedHumongousCounter_test() {
+        Assert.assertEquals(snapshot_5.getPinnedHumongousCount(), 10);
+    }
     @Test
-    public void cSetCounter_test() { Assert.assertEquals(snapshot_6.getCSetCount(), 10); }
+    public void cSetCounter_test() {
+        Assert.assertEquals(snapshot_6.getCSetCount(), 10);
+    }
     @Test
-    public void pinnedCounter_test() { Assert.assertEquals(snapshot_7.getPinnedCount(), 10); }
+    public void pinnedCounter_test() {
+        Assert.assertEquals(snapshot_7.getPinnedCount(), 10);
+    }
     @Test
-    public void pinnedCSetCounter_test() { Assert.assertEquals(snapshot_8.getPinnedCSetCount(), 10);}
+    public void pinnedCSetCounter_test() {
+        Assert.assertEquals(snapshot_8.getPinnedCSetCount(), 10);
+    }
     @Test
     public void age0Counter_test() {
         Assert.assertEquals(snapshot_1.getAge0Count(), 10);
