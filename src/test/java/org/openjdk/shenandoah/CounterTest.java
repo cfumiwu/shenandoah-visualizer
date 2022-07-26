@@ -119,31 +119,18 @@ public class CounterTest {
         snapshot_12 = new Snapshot(0, 1024, 1, stats_12, 0, new Histogram(2));
         snapshot_13 = new Snapshot(0, 1024, 1, stats_13, 0, new Histogram(2));
         snapshot_1.stateCounter();
-        snapshot_1.ageCounter();
         snapshot_2.stateCounter();
-        snapshot_2.ageCounter();
         snapshot_3.stateCounter();
-        snapshot_3.ageCounter();
         snapshot_4.stateCounter();
-        snapshot_4.ageCounter();
         snapshot_5.stateCounter();
-        snapshot_5.ageCounter();
         snapshot_6.stateCounter();
-        snapshot_6.ageCounter();
         snapshot_7.stateCounter();
-        snapshot_7.ageCounter();
         snapshot_8.stateCounter();
-        snapshot_8.ageCounter();
         snapshot_9.stateCounter();
-        snapshot_9.ageCounter();
         snapshot_10.stateCounter();
-        snapshot_10.ageCounter();
         snapshot_11.stateCounter();
-        snapshot_11.ageCounter();
         snapshot_12.stateCounter();
-        snapshot_12.ageCounter();
         snapshot_13.stateCounter();
-        snapshot_13.ageCounter();
     }
 
     @Test

@@ -438,7 +438,7 @@ class ShenandoahVisualizer {
             Map<String, Integer> summary_numbers = new LinkedHashMap<>();
 
             snapshot.stateCounter();
-            snapshot.ageCounter();
+
 
             summary_numbers.put("Empty Uncommitted", new Integer(snapshot.getEmptyUncommittedCount()));
 

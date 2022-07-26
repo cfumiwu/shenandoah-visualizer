@@ -293,6 +293,12 @@ public class Snapshot {
         cSetCount = 0;
         pinnedCount = 0;
         pinnedCSetCount = 0;
+        age0Count = 0;
+        age3Count = 0;
+        age6Count = 0;
+        age9Count = 0;
+        age12Count = 0;
+        age15Count = 0;
         for (RegionStat rs : stats) {
             switch (rs.state()) {
                 case EMPTY_UNCOMMITTED:
@@ -341,16 +347,6 @@ public class Snapshot {
                     pinnedCSetCount++;
                     break;
             }
-        }
-    }
-    public void ageCounter() {
-        age0Count = 0;
-        age3Count = 0;
-        age6Count = 0;
-        age9Count = 0;
-        age12Count = 0;
-        age15Count = 0;
-        for(RegionStat rs : stats) {
             if (rs.age() >= 0 && rs.age() < 3) {
                 age0Count++;
             }
