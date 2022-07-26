@@ -435,48 +435,47 @@ class ShenandoahVisualizer {
             items.put("Age 12+", new RegionStat(REGULAR, 12));
             items.put("Age 15+", new RegionStat(REGULAR, 15));
 
-            Map<String, Integer> summary_numbers = new LinkedHashMap<>();
+            Map<String, Integer> summaryNumbers = new LinkedHashMap<>();
 
             snapshot.stateCounter();
 
+            summaryNumbers.put("Empty Uncommitted", snapshot.getEmptyUncommittedCount());
 
-            summary_numbers.put("Empty Uncommitted", new Integer(snapshot.getEmptyUncommittedCount()));
+            summaryNumbers.put("Empty Committed", snapshot.getEmptyCommittedCount());
 
-            summary_numbers.put("Empty Committed", new Integer(snapshot.getEmptyCommittedCount()));
+            summaryNumbers.put("Trash", snapshot.getTrashCount());
 
-            summary_numbers.put("Trash", new Integer(snapshot.getTrashCount()));
+            summaryNumbers.put("TLAB Allocs", snapshot.getTlabCount());
 
-            summary_numbers.put("TLAB Allocs", new Integer(snapshot.getTlabCount()));
+            summaryNumbers.put("GCLAB Allocs", snapshot.getGclabCount());
 
-            summary_numbers.put("GCLAB Allocs", new Integer(snapshot.getGclabCount()));
+            summaryNumbers.put("PLAB Allocs", snapshot.getPlabCount());
 
-            summary_numbers.put("PLAB Allocs", new Integer(snapshot.getPlabCount()));
+            summaryNumbers.put("Shared Allocs", snapshot.getSharedCount());
 
-            summary_numbers.put("Shared Allocs", new Integer(snapshot.getSharedCount()));
+            summaryNumbers.put("Humongous", snapshot.getHumongousCount());
 
-            summary_numbers.put("Humongous", new Integer(snapshot.getHumongousCount()));
+            summaryNumbers.put("Humongous + Pinned", snapshot.getPinnedHumongousCount());
 
-            summary_numbers.put("Humongous + Pinned", new Integer(snapshot.getPinnedHumongousCount()));
+            summaryNumbers.put("Collection Set", snapshot.getCSetCount());
 
-            summary_numbers.put("Collection Set", new Integer(snapshot.getCSetCount()));
-
-            summary_numbers.put("Pinned", new Integer(snapshot.getPinnedCount()));
+            summaryNumbers.put("Pinned", snapshot.getPinnedCount());
 
 
-            summary_numbers.put("Pinned CSet", new Integer(snapshot.getPinnedCSetCount()));
+            summaryNumbers.put("Pinned CSet", snapshot.getPinnedCSetCount());
 
-            summary_numbers.put("Age 0+", new Integer(snapshot.getAge0Count()));
-            summary_numbers.put("Age 3+", new Integer(snapshot.getAge3Count()));
-            summary_numbers.put("Age 6+", new Integer(snapshot.getAge6Count()));
-            summary_numbers.put("Age 9+", new Integer(snapshot.getAge9Count()));
-            summary_numbers.put("Age 12+", new Integer(snapshot.getAge12Count()));
-            summary_numbers.put("Age 15+", new Integer(snapshot.getAge15Count()));
+            summaryNumbers.put("Age 0+", snapshot.getAge0Count());
+            summaryNumbers.put("Age 3+", snapshot.getAge3Count());
+            summaryNumbers.put("Age 6+", snapshot.getAge6Count());
+            summaryNumbers.put("Age 9+", snapshot.getAge9Count());
+            summaryNumbers.put("Age 12+", snapshot.getAge12Count());
+            summaryNumbers.put("Age 15+", snapshot.getAge15Count());
             int i = 0;
             for (String key : items.keySet()) {
                 int y = (int) (i * sqSize * 1.5);
                 items.get(key).render(g, 0, y, sqSize, sqSize);
                 g.setColor(Color.BLACK);
-                g.drawString(key + " total: " + summary_numbers.get(key).toString(), (int) (sqSize * 1.5), y + sqSize);
+                g.drawString(key + " total: " + summaryNumbers.get(key).toString(), (int) (sqSize * 1.5), y + sqSize);
                 i++;
             }
         }
