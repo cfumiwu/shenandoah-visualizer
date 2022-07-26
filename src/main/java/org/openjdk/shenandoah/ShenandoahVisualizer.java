@@ -437,36 +437,40 @@ class ShenandoahVisualizer {
 
             Map<String, Integer> summary_numbers = new LinkedHashMap<>();
 
-            summary_numbers.put("Empty Uncommitted", new Integer(snapshot.emptyUncommittedCounter()));
+            snapshot.stateCounter();
+            snapshot.ageCounter();
 
-            summary_numbers.put("Empty Committed", new Integer(snapshot.emptyCommittedCounter()));
+            summary_numbers.put("Empty Uncommitted", new Integer(snapshot.getEmptyUncommittedCount()));
 
-            summary_numbers.put("Trash", new Integer(snapshot.trashCounter()));
+            summary_numbers.put("Empty Committed", new Integer(snapshot.getEmptyCommittedCount()));
 
-            summary_numbers.put("TLAB Allocs", new Integer(snapshot.tlabCounter()));
+            summary_numbers.put("Trash", new Integer(snapshot.getTrashCount()));
 
-            summary_numbers.put("GCLAB Allocs", new Integer(snapshot.gclabCounter()));
+            summary_numbers.put("TLAB Allocs", new Integer(snapshot.getTlabCount()));
 
-            summary_numbers.put("PLAB Allocs", new Integer(snapshot.plabCounter()));
+            summary_numbers.put("GCLAB Allocs", new Integer(snapshot.getGclabCount()));
 
-            summary_numbers.put("Shared Allocs", new Integer(snapshot.sharedCounter()));
+            summary_numbers.put("PLAB Allocs", new Integer(snapshot.getPlabCount()));
 
-            summary_numbers.put("Humongous", new Integer(snapshot.humongousCounter()));
+            summary_numbers.put("Shared Allocs", new Integer(snapshot.getSharedCount()));
 
-            summary_numbers.put("Humongous + Pinned", new Integer(snapshot.pinnedHumongousCounter()));
+            summary_numbers.put("Humongous", new Integer(snapshot.getHumongousCount()));
 
-            summary_numbers.put("Collection Set", new Integer(snapshot.cSetCounter()));
+            summary_numbers.put("Humongous + Pinned", new Integer(snapshot.getPinnedHumongousCount()));
 
-            summary_numbers.put("Pinned", new Integer(snapshot.pinnedCounter()));
+            summary_numbers.put("Collection Set", new Integer(snapshot.getCSetCount()));
 
-            summary_numbers.put("Pinned CSet", new Integer(snapshot.pinnedCSetCounter()));
+            summary_numbers.put("Pinned", new Integer(snapshot.getPinnedCount()));
 
-            summary_numbers.put("Age 0+", new Integer(snapshot.age0Counter()));
-            summary_numbers.put("Age 3+", new Integer(snapshot.age3Counter()));
-            summary_numbers.put("Age 6+", new Integer(snapshot.age6Counter()));
-            summary_numbers.put("Age 9+", new Integer(snapshot.age9Counter()));
-            summary_numbers.put("Age 12+", new Integer(snapshot.age12Counter()));
-            summary_numbers.put("Age 15+", new Integer(snapshot.age15Counter()));
+
+            summary_numbers.put("Pinned CSet", new Integer(snapshot.getPinnedCSetCount()));
+
+            summary_numbers.put("Age 0+", new Integer(snapshot.getAge0Count()));
+            summary_numbers.put("Age 3+", new Integer(snapshot.getAge3Count()));
+            summary_numbers.put("Age 6+", new Integer(snapshot.getAge6Count()));
+            summary_numbers.put("Age 9+", new Integer(snapshot.getAge9Count()));
+            summary_numbers.put("Age 12+", new Integer(snapshot.getAge12Count()));
+            summary_numbers.put("Age 15+", new Integer(snapshot.getAge15Count()));
             int i = 0;
             for (String key : items.keySet()) {
                 int y = (int) (i * sqSize * 1.5);

@@ -279,179 +279,151 @@ public class Snapshot {
                 old_in_cset, total_in_cset, old, total);
         return total_in_cset == 0 ? 0 : ((double) (old_in_cset)) / total_in_cset;
     }
-    public int emptyUncommittedCounter() {
+
+    public void stateCounter() {
         emptyUncommittedCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.EMPTY_UNCOMMITTED) {
-                emptyUncommittedCount++;
-            }
-        }
-        return emptyUncommittedCount;
-    }
-    public int emptyCommittedCounter() {
         emptyCommittedCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.EMPTY_COMMITTED) {
-                emptyCommittedCount++;
-            }
-        }
-        return emptyCommittedCount;
-    }
-    public int trashCounter() {
         trashCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.TRASH) {
-                trashCount++;
-            }
-        }
-        return trashCount;
-    }
-    public int tlabCounter() {
         tlabCount = 0;
-        for (RegionStat rs : stats) {
-            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
-                if (rs.maxAllocsYoung() == rs.tlabAllocs()) {
-                    tlabCount++;
-                }
-            }
-        }
-        return tlabCount;
-    }
-    public int gclabCounter() {
         gclabCount = 0;
-        for (RegionStat rs : stats) {
-            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
-                if ((rs.maxAllocsYoung() == rs.gclabAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs())) {
-                    gclabCount++;
-                }
-            }
-        }
-        return gclabCount;
-    }
-    public int plabCounter() {
         plabCount = 0;
-        for (RegionStat rs : stats) {
-            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
-                if (rs.maxAllocsOld() == rs.plabAllocs()) {
-                    plabCount++;
-                }
-            }
-        }
-        return plabCount;
-    }
-    public int sharedCounter() {
         sharedCount = 0;
-        for (RegionStat rs : stats) {
-            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.YOUNG)) {
-                if (((rs.maxAllocsYoung() == rs.sharedAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs()) && (rs.maxAllocsYoung() > rs.gclabAllocs()))) {
-                    sharedCount++;
-                }
-            }
-            if ((rs.state() == RegionState.REGULAR) && (rs.affiliation() == RegionAffiliation.OLD)) {
-                if ((rs.maxAllocsOld() == rs.sharedAllocs()) && (rs.maxAllocsOld() > rs.plabAllocs())) {
-                    sharedCount++;
-                }
-            }
-        }
-        return sharedCount;
-    }
-    public int humongousCounter() {
         humongousCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.HUMONGOUS) {
-                humongousCount++;
-            }
-        }
-        return humongousCount;
-    }
-    public int pinnedHumongousCounter() {
         pinnedHumongousCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.PINNED_HUMONGOUS) {
-                pinnedHumongousCount++;
-            }
-        }
-        return pinnedHumongousCount;
-    }
-    public int cSetCounter() {
         cSetCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.CSET) {
-                cSetCount++;
-            }
-        }
-        return cSetCount;
-    }
-    public int pinnedCounter() {
         pinnedCount = 0;
-        for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.PINNED) {
-                pinnedCount++;
-            }
-        }
-        return pinnedCount;
-    }
-    public int pinnedCSetCounter() {
         pinnedCSetCount = 0;
         for (RegionStat rs : stats) {
-            if (rs.state() == RegionState.PINNED_CSET) {
-                pinnedCSetCount++;
+            switch (rs.state()) {
+                case EMPTY_UNCOMMITTED:
+                    emptyUncommittedCount++;
+                    break;
+                case EMPTY_COMMITTED:
+                    emptyCommittedCount++;
+                    break;
+                case TRASH:
+                    trashCount++;
+                    break;
+                case REGULAR:
+                    if (rs.affiliation() == RegionAffiliation.YOUNG) {
+                        if (rs.maxAllocsYoung() == rs.tlabAllocs()) {
+                            tlabCount++;
+                        }
+                        if ((rs.maxAllocsYoung() == rs.gclabAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs())) {
+                            gclabCount++;
+                        }
+                        if (((rs.maxAllocsYoung() == rs.sharedAllocs()) && (rs.maxAllocsYoung() > rs.tlabAllocs()) && (rs.maxAllocsYoung() > rs.gclabAllocs()))) {
+                            sharedCount++;
+                        }
+                    }
+                    if (rs.affiliation() == RegionAffiliation.OLD) {
+                        if (rs.maxAllocsOld() == rs.plabAllocs()) {
+                            plabCount++;
+                        }
+                        if ((rs.maxAllocsOld() == rs.sharedAllocs()) && (rs.maxAllocsOld() > rs.plabAllocs())) {
+                            sharedCount++;
+                        }
+                    }
+                    break;
+                case HUMONGOUS:
+                    humongousCount++;
+                    break;
+                case PINNED_HUMONGOUS:
+                    pinnedHumongousCount++;
+                    break;
+                case CSET:
+                    cSetCount++;
+                    break;
+                case PINNED:
+                    pinnedCount++;
+                    break;
+                case PINNED_CSET:
+                    pinnedCSetCount++;
+                    break;
             }
         }
-        return pinnedCSetCount;
     }
-    public int age0Counter() {
+    public void ageCounter() {
         age0Count = 0;
-        for (RegionStat rs : stats) {
+        age3Count = 0;
+        age6Count = 0;
+        age9Count = 0;
+        age12Count = 0;
+        age15Count = 0;
+        for(RegionStat rs : stats) {
             if (rs.age() >= 0 && rs.age() < 3) {
                 age0Count++;
             }
-        }
-        return age0Count;
-    }
-    public int age3Counter() {
-        age3Count = 0;
-        for (RegionStat rs : stats) {
             if (rs.age() >= 3  && rs.age() < 6) {
                 age3Count++;
             }
-        }
-        return age3Count;
-    }
-    public int age6Counter() {
-        age6Count = 0;
-        for (RegionStat rs : stats) {
             if (rs.age() >= 6  && rs.age() < 9) {
                 age6Count++;
             }
-        }
-        return age6Count;
-    }
-    public int age9Counter() {
-        age9Count = 0;
-        for (RegionStat rs : stats) {
             if (rs.age() >= 9  && rs.age() < 12) {
                 age9Count++;
             }
-        }
-        return age9Count;
-    }
-    public int age12Counter() {
-        age12Count = 0;
-        for (RegionStat rs : stats) {
             if (rs.age() >= 12  && rs.age() < 15) {
                 age12Count++;
             }
-        }
-        return age12Count;
-    }
-    public int age15Counter() {
-        age15Count = 0;
-        for (RegionStat rs : stats) {
             if (rs.age() >= 15) {
                 age15Count++;
             }
         }
+    }
+    public int getEmptyUncommittedCount() {
+        return emptyUncommittedCount;
+    }
+    public int getEmptyCommittedCount() {
+        return emptyCommittedCount;
+    }
+    public int getTrashCount() {
+        return trashCount;
+    }
+    public int getTlabCount() {
+        return tlabCount;
+    }
+    public int getGclabCount() {
+        return gclabCount;
+    }
+    public int getPlabCount() {
+        return plabCount;
+    }
+    public int getSharedCount() {
+        return sharedCount;
+    }
+    public int getHumongousCount() {
+        return humongousCount;
+    }
+    public int getPinnedHumongousCount() {
+        return pinnedHumongousCount;
+    }
+    public int getCSetCount() {
+        return cSetCount;
+    }
+    public int getPinnedCount() {
+        return pinnedCount;
+    }
+    public int getPinnedCSetCount() {
+        return pinnedCSetCount;
+    }
+    public int getAge0Count() {
+        return age0Count;
+    }
+    public int getAge3Count() {
+        return age3Count;
+    }
+    public int getAge6Count() {
+        return age6Count;
+    }
+    public int getAge9Count() {
+        return age9Count;
+    }
+    public int getAge12Count() {
+        return age12Count;
+    }
+    public int getAge15Count() {
         return age15Count;
     }
+
 }

@@ -118,71 +118,97 @@ public class CounterTest {
         snapshot_11 = new Snapshot(0, 1024, 1, stats_11, 0, new Histogram(2));
         snapshot_12 = new Snapshot(0, 1024, 1, stats_12, 0, new Histogram(2));
         snapshot_13 = new Snapshot(0, 1024, 1, stats_13, 0, new Histogram(2));
+        snapshot_1.stateCounter();
+        snapshot_1.ageCounter();
+        snapshot_2.stateCounter();
+        snapshot_2.ageCounter();
+        snapshot_3.stateCounter();
+        snapshot_3.ageCounter();
+        snapshot_4.stateCounter();
+        snapshot_4.ageCounter();
+        snapshot_5.stateCounter();
+        snapshot_5.ageCounter();
+        snapshot_6.stateCounter();
+        snapshot_6.ageCounter();
+        snapshot_7.stateCounter();
+        snapshot_7.ageCounter();
+        snapshot_8.stateCounter();
+        snapshot_8.ageCounter();
+        snapshot_9.stateCounter();
+        snapshot_9.ageCounter();
+        snapshot_10.stateCounter();
+        snapshot_10.ageCounter();
+        snapshot_11.stateCounter();
+        snapshot_11.ageCounter();
+        snapshot_12.stateCounter();
+        snapshot_12.ageCounter();
+        snapshot_13.stateCounter();
+        snapshot_13.ageCounter();
     }
 
     @Test
     public void emptyUncommittedCounter_test() {
-        Assert.assertEquals(snapshot_1.emptyUncommittedCounter(), 10);
+        Assert.assertEquals(snapshot_1.getEmptyUncommittedCount(), 10);
     }
     @Test
     public void emptyCommittedCounter_test() {
-        Assert.assertEquals(snapshot_2.emptyCommittedCounter(), 10);
+        Assert.assertEquals(snapshot_2.getEmptyCommittedCount(), 10);
     }
     @Test
     public void trashCounter_test() {
-        Assert.assertEquals(snapshot_3.trashCounter(), 10);
+        Assert.assertEquals(snapshot_3.getTrashCount(), 10);
     }
     @Test
     public void humongousCounter_test() {
-        Assert.assertEquals(snapshot_4.humongousCounter(), 10);
+        Assert.assertEquals(snapshot_4.getHumongousCount(), 10);
     }
     @Test
-    public void pinnedHumongousCounter_test() { Assert.assertEquals(snapshot_5.pinnedHumongousCounter(), 10); }
+    public void pinnedHumongousCounter_test() { Assert.assertEquals(snapshot_5.getPinnedHumongousCount(), 10); }
     @Test
-    public void cSetCounter_test() { Assert.assertEquals(snapshot_6.cSetCounter(), 10); }
+    public void cSetCounter_test() { Assert.assertEquals(snapshot_6.getCSetCount(), 10); }
     @Test
-    public void pinnedCounter_test() { Assert.assertEquals(snapshot_7.pinnedCounter(), 10); }
+    public void pinnedCounter_test() { Assert.assertEquals(snapshot_7.getPinnedCount(), 10); }
     @Test
-    public void pinnedCSetCounter_test() { Assert.assertEquals(snapshot_8.pinnedCSetCounter(), 10);}
+    public void pinnedCSetCounter_test() { Assert.assertEquals(snapshot_8.getPinnedCSetCount(), 10);}
     @Test
     public void age0Counter_test() {
-        Assert.assertEquals(snapshot_1.age0Counter(), 10);
+        Assert.assertEquals(snapshot_1.getAge0Count(), 10);
     }
     @Test
     public void age3Counter_test() {
-        Assert.assertEquals(snapshot_2.age3Counter(), 10);
+        Assert.assertEquals(snapshot_2.getAge3Count(), 10);
     }
     @Test
     public void age6Counter_test() {
-        Assert.assertEquals(snapshot_3.age6Counter(), 10);
+        Assert.assertEquals(snapshot_3.getAge6Count(), 10);
     }
     @Test
     public void age9Counter_test() {
-        Assert.assertEquals(snapshot_4.age9Counter(), 10);
+        Assert.assertEquals(snapshot_4.getAge9Count(), 10);
     }
     @Test
     public void age12Counter_test() {
-        Assert.assertEquals(snapshot_5.age12Counter(), 10);
+        Assert.assertEquals(snapshot_5.getAge12Count(), 10);
     }
     @Test
     public void age15Counter_test() {
-        Assert.assertEquals(snapshot_6.age15Counter(), 10);
+        Assert.assertEquals(snapshot_6.getAge15Count(), 10);
     }
     @Test
     public void tlabCounter_test() {
-        Assert.assertEquals(snapshot_9.tlabCounter(), 10);
+        Assert.assertEquals(snapshot_9.getTlabCount(), 10);
     }
     @Test
     public void gclabCounter_test() {
-        Assert.assertEquals(snapshot_10.gclabCounter(), 10);
+        Assert.assertEquals(snapshot_10.getGclabCount(), 10);
     }
     @Test
     public void plabCounter_test() {
-        Assert.assertEquals(snapshot_11.plabCounter(), 10);
+        Assert.assertEquals(snapshot_11.getPlabCount(), 10);
     }
     @Test
     public void sharedCounter_test() {
-        Assert.assertEquals(snapshot_12.sharedCounter(), 10);
-        Assert.assertEquals(snapshot_13.sharedCounter(), 10);
+        Assert.assertEquals(snapshot_12.getSharedCount(), 10);
+        Assert.assertEquals(snapshot_13.getSharedCount(), 10);
     }
 }
