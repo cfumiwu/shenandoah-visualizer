@@ -428,11 +428,11 @@ class ShenandoahVisualizer {
             items.put("Pinned CSet",
                     new RegionStat(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, PINNED_CSET));
 
-            items.put("Age 0+", new RegionStat(REGULAR, 0));
-            items.put("Age 3+", new RegionStat(REGULAR, 3));
-            items.put("Age 6+", new RegionStat(REGULAR, 6));
-            items.put("Age 9+", new RegionStat(REGULAR, 9));
-            items.put("Age 12+", new RegionStat(REGULAR, 12));
+            items.put("Age [0, 3)", new RegionStat(REGULAR, 0));
+            items.put("Age [3, 6)", new RegionStat(REGULAR, 3));
+            items.put("Age [6, 9)", new RegionStat(REGULAR, 6));
+            items.put("Age [9, 12)", new RegionStat(REGULAR, 9));
+            items.put("Age [12, 15)", new RegionStat(REGULAR, 12));
             items.put("Age 15+", new RegionStat(REGULAR, 15));
 
             Map<String, Integer> summaryNumbers = new LinkedHashMap<>();
@@ -464,11 +464,11 @@ class ShenandoahVisualizer {
 
             summaryNumbers.put("Pinned CSet", snapshot.getPinnedCSetCount());
 
-            summaryNumbers.put("Age 0+", snapshot.getAge0Count());
-            summaryNumbers.put("Age 3+", snapshot.getAge3Count());
-            summaryNumbers.put("Age 6+", snapshot.getAge6Count());
-            summaryNumbers.put("Age 9+", snapshot.getAge9Count());
-            summaryNumbers.put("Age 12+", snapshot.getAge12Count());
+            summaryNumbers.put("Age [0, 3)", snapshot.getAge0Count());
+            summaryNumbers.put("Age [3, 6)", snapshot.getAge3Count());
+            summaryNumbers.put("Age [6, 9)", snapshot.getAge6Count());
+            summaryNumbers.put("Age [9, 12)", snapshot.getAge9Count());
+            summaryNumbers.put("Age [12, 15)", snapshot.getAge12Count());
             summaryNumbers.put("Age 15+", snapshot.getAge15Count());
             int i = 0;
             for (String key : items.keySet()) {
