@@ -29,12 +29,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -273,6 +268,18 @@ class ShenandoahVisualizer {
         regionsPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent ev) {
                 renderRunner.notifyRegionResized(ev.getComponent().getWidth(), ev.getComponent().getHeight());
+            }
+        });
+
+        regionsPanel.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                System.out.println(e.getX() + ", " + e.getY());
             }
         });
 
