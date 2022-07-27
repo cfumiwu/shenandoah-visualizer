@@ -111,6 +111,7 @@ public class Snapshot {
             this.oldPhase = Generation.OLD.phase(status);
             this.youngPhase = Generation.YOUNG.phase(status);
         }
+        this.stateCounter();
     }
 
     public Phase phase() {
@@ -280,7 +281,7 @@ public class Snapshot {
         return total_in_cset == 0 ? 0 : ((double) (old_in_cset)) / total_in_cset;
     }
 
-    public void stateCounter() {
+    private void stateCounter() {
         emptyUncommittedCount = 0;
         emptyCommittedCount = 0;
         trashCount = 0;
