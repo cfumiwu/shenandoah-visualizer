@@ -433,7 +433,7 @@ class ShenandoahVisualizer {
             items.put("Age [6, 9)", new RegionStat(REGULAR, 6));
             items.put("Age [9, 12)", new RegionStat(REGULAR, 9));
             items.put("Age [12, 15)", new RegionStat(REGULAR, 12));
-            items.put("Age 15+", new RegionStat(REGULAR, 15));
+            items.put("Age 15", new RegionStat(REGULAR, 15));
 
             Map<String, Integer> summaryNumbers = new LinkedHashMap<>();
 
@@ -469,7 +469,7 @@ class ShenandoahVisualizer {
             summaryNumbers.put("Age [6, 9)", snapshot.getAge6Count());
             summaryNumbers.put("Age [9, 12)", snapshot.getAge9Count());
             summaryNumbers.put("Age [12, 15)", snapshot.getAge12Count());
-            summaryNumbers.put("Age 15+", snapshot.getAge15Count());
+            summaryNumbers.put("Age 15", snapshot.getAge15Count());
             int i = 0;
             for (String key : items.keySet()) {
                 int y = (int) (i * sqSize * 1.5);
