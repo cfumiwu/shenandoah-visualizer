@@ -271,16 +271,32 @@ class ShenandoahVisualizer {
             }
         });
 
-        regionsPanel.addMouseMotionListener(new MouseMotionListener() {
+        regionsPanel.addMouseListener(new MouseListener() {
             @Override
-            public void mouseDragged(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
 
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
-                System.out.println(e.getX() + ", " + e.getY());
+            public void mousePressed(MouseEvent e) {
+
             }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
         });
 
         graphPanel.addComponentListener(new ComponentAdapter() {
