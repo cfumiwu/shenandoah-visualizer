@@ -274,17 +274,17 @@ class ShenandoahVisualizer {
         regionsPanel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                renderRunner.playback.isPaused = true;
                 Snapshot snapshot;
                 if (isReplayFinal) {
                     snapshot = renderRunner.playback.snapshot;
                 } else {
                     snapshot = renderRunner.live.snapshot;
                 }
-                System.out.println(e.getX() + ", " + e.getY());
-                renderRunner.playback.isPaused = true;
+//                System.out.println(e.getX() + ", " + e.getY());
                 RegionPopUp popup = new RegionPopUp(e.getX(), e.getY(), snapshot);
-                popup.setSize(1000, 500);
-                popup.setLocation(0, 0);
+                popup.setSize(300, 300);
+                popup.setLocation(e.getX(), e.getY());
                 popup.setVisible(true);
                 popup.addWindowListener(new WindowAdapter() {
                     @Override

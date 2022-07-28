@@ -276,8 +276,8 @@ public class Snapshot {
             }
             ++total;
         }
-//        System.out.printf("cset: %s old/ %s cset total: %s old/ %s total\n",
-//                old_in_cset, total_in_cset, old, total);
+        System.out.printf("cset: %s old/ %s cset total: %s old/ %s total\n",
+                old_in_cset, total_in_cset, old, total);
         return total_in_cset == 0 ? 0 : ((double) (old_in_cset)) / total_in_cset;
     }
 

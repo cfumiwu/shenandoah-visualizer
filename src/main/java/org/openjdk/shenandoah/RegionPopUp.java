@@ -30,15 +30,16 @@ import java.awt.*;
 public class RegionPopUp extends JFrame {
     private int regionx;
     private int regiony;
-    public float usedLvl;
-    public float liveLvl;
-    public float tlabLvl;
-    public float gclabLvl;
-    public float plabLvl;
-    public float sharedLvl;
-    public RegionState state;
-    public long age;
-    public RegionAffiliation affiliation;
+    private int regionNumber;
+    private float usedLvl;
+    private float liveLvl;
+    private float tlabLvl;
+    private float gclabLvl;
+    private float plabLvl;
+    private float sharedLvl;
+    private RegionState state;
+    private long age;
+    private RegionAffiliation affiliation;
 
     Snapshot snapshot;
 
@@ -52,17 +53,23 @@ public class RegionPopUp extends JFrame {
             }
         };
         this.add(detailedState);
-        usedLvl = snapshot.get(2024).used() * 100f;
-        liveLvl = snapshot.get(2024).live() * 100f;
-        tlabLvl = snapshot.get(2024).tlabAllocs() * 100f;
-        gclabLvl = snapshot.get(2024).gclabAllocs() * 100f;
-        plabLvl = snapshot.get(2024).plabAllocs() * 100f;
-        sharedLvl = snapshot.get(2024).sharedAllocs() * 100f;
-        state = snapshot.get(2024).state();
-        age = snapshot.get(2024).age();
-        affiliation = snapshot.get(2024).affiliation();
+        regionNumber = (((regionx / 15) + 1) + ((regiony / 15) * 81)) - 1;
+//        System.out.println(regionNumber);
+        if (regionNumber >= 0 && regionNumber < 2048) {
+            usedLvl = snapshot.get(regionNumber).used() * 100f;
+            liveLvl = snapshot.get(regionNumber).live() * 100f;
+            tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
+            gclabLvl = snapshot.get(regionNumber).gclabAllocs() * 100f;
+            plabLvl = snapshot.get(regionNumber).plabAllocs() * 100f;
+            sharedLvl = snapshot.get(regionNumber).sharedAllocs() * 100f;
+            state = snapshot.get(regionNumber).state();
+            age = snapshot.get(regionNumber).age();
+            affiliation = snapshot.get(regionNumber).affiliation();
+        }
+
     }
     public synchronized void renderDetailedRegion(Graphics g) {
+        if (regionNumber >= 0 && regionNumber < 2048) {
             g.setColor(Color.BLACK);
             g.drawString("Used Level: " + usedLvl + " %", 20, 30);
             g.drawString("Live Level: " + liveLvl + " %", 20, 50);
@@ -73,7 +80,9 @@ public class RegionPopUp extends JFrame {
             g.drawString("State: " + state, 20, 150);
             g.drawString("Age: " + age, 20, 170);
             g.drawString("Affiliation: " + affiliation, 20, 190);
+        } else {
+            g.drawString("There is no region in the place you clicked.", 20, 30);
         }
-
-
+    }
 }
+
