@@ -334,7 +334,9 @@ public class RegionStat {
         return gclabLvl;
     }
 
-    public float plabAllocs() { return plabLvl; }
+    public float plabAllocs() {
+        return plabLvl;
+    }
 
     public float maxAllocsYoung() {
         return Collections.max(Arrays.asList(tlabLvl, gclabLvl, sharedLvl));

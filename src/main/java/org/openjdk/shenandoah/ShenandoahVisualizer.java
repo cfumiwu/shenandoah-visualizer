@@ -270,11 +270,31 @@ class ShenandoahVisualizer {
                 renderRunner.notifyRegionResized(ev.getComponent().getWidth(), ev.getComponent().getHeight());
             }
         });
-
+        final boolean isReplayFinal = isReplay;
         regionsPanel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                Snapshot snapshot;
+                if (isReplayFinal) {
+                    snapshot = renderRunner.playback.snapshot;
+                } else {
+                    snapshot = renderRunner.live.snapshot;
+                }
+                System.out.println(e.getX() + ", " + e.getY());
+                renderRunner.playback.isPaused = true;
+                RegionPopUp popup = new RegionPopUp(e.getX(), e.getY(), snapshot);
+                popup.setSize(1000, 500);
+                popup.setLocation(0, 0);
+                popup.setVisible(true);
+                popup.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        super.windowClosing(e);
+                        renderRunner.playback.isPaused = false;
+                        popup.setVisible(false);
+                        popup.dispose();
+                    }
+                });
             }
 
             @Override

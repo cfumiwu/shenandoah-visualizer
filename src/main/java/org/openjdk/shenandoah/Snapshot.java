@@ -422,5 +422,4 @@ public class Snapshot {
     public int getAge15Count() {
         return age15Count;
     }
-
 }
