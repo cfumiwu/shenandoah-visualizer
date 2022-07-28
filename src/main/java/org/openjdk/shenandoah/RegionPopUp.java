@@ -61,12 +61,6 @@ public class RegionPopUp extends JFrame {
         state = snapshot.get(2024).state();
         age = snapshot.get(2024).age();
         affiliation = snapshot.get(2024).affiliation();
-        if (state != RegionState.REGULAR) {
-            tlabLvl = 0f;
-            gclabLvl = 0f;
-            plabLvl = 0f;
-            sharedLvl = 0f;
-        }
     }
     public synchronized void renderDetailedRegion(Graphics g) {
             g.setColor(Color.BLACK);
