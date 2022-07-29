@@ -55,7 +55,7 @@ public class RegionPopUp extends JFrame {
         this.add(detailedState);
         regionNumber = (((regionx / 15) + 1) + ((regiony / 15) * 81)) - 1;
 //        System.out.println(regionNumber);
-        if (regionNumber >= 0 && regionNumber < 2048) {
+        if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
             usedLvl = snapshot.get(regionNumber).used() * 100f;
             liveLvl = snapshot.get(regionNumber).live() * 100f;
             tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
@@ -69,17 +69,18 @@ public class RegionPopUp extends JFrame {
 
     }
     public synchronized void renderDetailedRegion(Graphics g) {
-        if (regionNumber >= 0 && regionNumber < 2048) {
+        if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
             g.setColor(Color.BLACK);
-            g.drawString("Used Level: " + usedLvl + " %", 20, 30);
-            g.drawString("Live Level: " + liveLvl + " %", 20, 50);
-            g.drawString("TLAB Level: " + tlabLvl + " %", 20, 70);
-            g.drawString("GCLAB Level: " + gclabLvl + " %", 20, 90);
-            g.drawString("PLAB Level: " + plabLvl + " %", 20, 110);
-            g.drawString("Shared Level: " + sharedLvl + " %", 20, 130);
-            g.drawString("State: " + state, 20, 150);
-            g.drawString("Age: " + age, 20, 170);
-            g.drawString("Affiliation: " + affiliation, 20, 190);
+            g.drawString("Region index: " + regionNumber, 20, 30);
+            g.drawString("Used Level: " + usedLvl + " %", 20, 50);
+            g.drawString("Live Level: " + liveLvl + " %", 20, 70);
+            g.drawString("TLAB Level: " + tlabLvl + " %", 20, 90);
+            g.drawString("GCLAB Level: " + gclabLvl + " %", 20, 110);
+            g.drawString("PLAB Level: " + plabLvl + " %", 20, 130);
+            g.drawString("Shared Level: " + sharedLvl + " %", 20, 150);
+            g.drawString("State: " + state, 20, 170);
+            g.drawString("Age: " + age, 20, 190);
+            g.drawString("Affiliation: " + affiliation, 20, 210);
         } else {
             g.drawString("There is no region in the place you clicked.", 20, 30);
         }

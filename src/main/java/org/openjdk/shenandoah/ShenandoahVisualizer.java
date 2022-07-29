@@ -283,7 +283,7 @@ class ShenandoahVisualizer {
                 }
 //                System.out.println(e.getX() + ", " + e.getY());
                 RegionPopUp popup = new RegionPopUp(e.getX(), e.getY(), snapshot);
-                popup.setSize(300, 300);
+                popup.setSize(310, 310);
                 popup.setLocation(e.getX(), e.getY());
                 popup.setVisible(true);
                 popup.addWindowListener(new WindowAdapter() {
