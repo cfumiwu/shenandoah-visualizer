@@ -28,13 +28,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RegionPopUp extends JFrame {
-    private int regionx;
-    private int regiony;
-    private int regionWidth;
-    private int regionHeight;
-    private int area;
-    private int sqSize;
-    private int cols;
     private int regionNumber;
     private float usedLvl;
     private float liveLvl;
@@ -48,22 +41,15 @@ public class RegionPopUp extends JFrame {
 
     Snapshot snapshot;
 
-    public RegionPopUp(int regionx, int regiony, Snapshot snapshot, int regionWidth, int regionHeight) {
-        this.regionx = regionx;
-        this.regiony = regiony;
+    public RegionPopUp(Snapshot snapshot, int regionNumber) {
         this.snapshot = snapshot;
-        this.regionWidth = regionWidth;
-        this.regionHeight = regionHeight;
+        this.regionNumber = regionNumber;
         JPanel detailedState = new JPanel() {
             public void paint(Graphics g) {
                 renderDetailedRegion(g);
             }
         };
         this.add(detailedState);
-        area = regionWidth * regionHeight;
-        sqSize = Math.max(1, (int) Math.sqrt(1D * area / snapshot.regionCount()));
-        cols = regionWidth / sqSize;
-        regionNumber = (((regionx / sqSize) + 1) + ((regiony / sqSize) * cols)) - 1;
 //        System.out.println(regionNumber);
         if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
             usedLvl = snapshot.get(regionNumber).used() * 100f;
@@ -79,21 +65,18 @@ public class RegionPopUp extends JFrame {
 
     }
     public synchronized void renderDetailedRegion(Graphics g) {
-        if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
-            g.setColor(Color.BLACK);
-            g.drawString("Region index: " + regionNumber, 20, 30);
-            g.drawString("Used Level: " + usedLvl + " %", 20, 50);
-            g.drawString("Live Level: " + liveLvl + " %", 20, 70);
-            g.drawString("TLAB Level: " + tlabLvl + " %", 20, 90);
-            g.drawString("GCLAB Level: " + gclabLvl + " %", 20, 110);
-            g.drawString("PLAB Level: " + plabLvl + " %", 20, 130);
-            g.drawString("Shared Level: " + sharedLvl + " %", 20, 150);
-            g.drawString("State: " + state, 20, 170);
-            g.drawString("Age: " + age, 20, 190);
-            g.drawString("Affiliation: " + affiliation, 20, 210);
-        } else {
-            g.drawString("There is no region in the place you clicked.", 20, 30);
-        }
+        g.setColor(Color.BLACK);
+        g.drawString("Region index: " + regionNumber, 20, 30);
+        g.drawString("Used Level: " + usedLvl + " %", 20, 50);
+        g.drawString("Live Level: " + liveLvl + " %", 20, 70);
+        g.drawString("TLAB Level: " + tlabLvl + " %", 20, 90);
+        g.drawString("GCLAB Level: " + gclabLvl + " %", 20, 110);
+        g.drawString("PLAB Level: " + plabLvl + " %", 20, 130);
+        g.drawString("Shared Level: " + sharedLvl + " %", 20, 150);
+        g.drawString("State: " + state, 20, 170);
+        g.drawString("Age: " + age, 20, 190);
+        g.drawString("Affiliation: " + affiliation, 20, 210);
+
     }
 }
 

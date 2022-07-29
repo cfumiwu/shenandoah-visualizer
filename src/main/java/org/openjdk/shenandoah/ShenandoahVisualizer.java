@@ -277,7 +277,6 @@ class ShenandoahVisualizer {
         regionsPanel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                renderRunner.playback.isPaused = true;
                 Snapshot snapshot;
                 if (isReplayFinal) {
                     snapshot = renderRunner.playback.snapshot;
@@ -285,19 +284,27 @@ class ShenandoahVisualizer {
                     snapshot = renderRunner.live.snapshot;
                 }
 //                System.out.println(e.getX() + ", " + e.getY());
-                RegionPopUp popup = new RegionPopUp(e.getX(), e.getY(), snapshot, regionWidth[0], regionHeight[0]);
-                popup.setSize(310, 310);
-                popup.setLocation(e.getX(), e.getY());
-                popup.setVisible(true);
-                popup.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        super.windowClosing(e);
-                        renderRunner.playback.isPaused = false;
-                        popup.setVisible(false);
-                        popup.dispose();
-                    }
-                });
+                int area = regionWidth[0] * regionHeight[0];
+                int sqSize = Math.max(1, (int) Math.sqrt(1D * area / snapshot.regionCount()));
+                int cols = regionWidth[0] / sqSize;
+                int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
+                if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
+                    renderRunner.playback.isPaused = true;
+                    RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
+                    popup.setSize(310, 310);
+                    popup.setLocation(e.getX(), e.getY());
+                    popup.setVisible(true);
+                    popup.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                            super.windowClosing(e);
+                            renderRunner.playback.isPaused = false;
+                            popup.setVisible(false);
+                            popup.dispose();
+                        }
+                    });
+                }
+
             }
 
             @Override
@@ -319,7 +326,6 @@ class ShenandoahVisualizer {
             public void mouseExited(MouseEvent e) {
 
             }
-
         });
 
         graphPanel.addComponentListener(new ComponentAdapter() {
