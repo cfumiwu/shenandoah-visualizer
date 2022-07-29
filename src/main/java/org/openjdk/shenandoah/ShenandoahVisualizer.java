@@ -264,9 +264,12 @@ class ShenandoahVisualizer {
             }
         };
         toolbarPanel.setResetSpeedListener(resetSpeedListener);
-
+        final int[] regionWidth = new int[1];
+        final int[] regionHeight = new int[1];
         regionsPanel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent ev) {
+                regionWidth[0] = ev.getComponent().getWidth();
+                regionHeight[0] = ev.getComponent().getHeight();
                 renderRunner.notifyRegionResized(ev.getComponent().getWidth(), ev.getComponent().getHeight());
             }
         });
@@ -282,7 +285,7 @@ class ShenandoahVisualizer {
                     snapshot = renderRunner.live.snapshot;
                 }
 //                System.out.println(e.getX() + ", " + e.getY());
-                RegionPopUp popup = new RegionPopUp(e.getX(), e.getY(), snapshot);
+                RegionPopUp popup = new RegionPopUp(e.getX(), e.getY(), snapshot, regionWidth[0], regionHeight[0]);
                 popup.setSize(310, 310);
                 popup.setLocation(e.getX(), e.getY());
                 popup.setVisible(true);
@@ -530,7 +533,6 @@ class ShenandoahVisualizer {
             for (int i = 0; i < snapshot.regionCount(); i++) {
                 int rectx = (i % cols) * sqSize;
                 int recty = (i / cols) * sqSize;
-
                 RegionStat s = snapshot.get(i);
                 s.render(g, rectx, recty, cellSize, cellSize);
             }

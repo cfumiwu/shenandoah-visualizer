@@ -30,6 +30,11 @@ import java.awt.*;
 public class RegionPopUp extends JFrame {
     private int regionx;
     private int regiony;
+    private int regionWidth;
+    private int regionHeight;
+    private int area;
+    private int sqSize;
+    private int cols;
     private int regionNumber;
     private float usedLvl;
     private float liveLvl;
@@ -43,17 +48,22 @@ public class RegionPopUp extends JFrame {
 
     Snapshot snapshot;
 
-    public RegionPopUp(int regionx, int regiony, Snapshot snapshot) {
+    public RegionPopUp(int regionx, int regiony, Snapshot snapshot, int regionWidth, int regionHeight) {
         this.regionx = regionx;
         this.regiony = regiony;
         this.snapshot = snapshot;
+        this.regionWidth = regionWidth;
+        this.regionHeight = regionHeight;
         JPanel detailedState = new JPanel() {
             public void paint(Graphics g) {
                 renderDetailedRegion(g);
             }
         };
         this.add(detailedState);
-        regionNumber = (((regionx / 15) + 1) + ((regiony / 15) * 81)) - 1;
+        area = regionWidth * regionHeight;
+        sqSize = Math.max(1, (int) Math.sqrt(1D * area / snapshot.regionCount()));
+        cols = regionWidth / sqSize;
+        regionNumber = (((regionx / sqSize) + 1) + ((regiony / sqSize) * cols)) - 1;
 //        System.out.println(regionNumber);
         if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
             usedLvl = snapshot.get(regionNumber).used() * 100f;
