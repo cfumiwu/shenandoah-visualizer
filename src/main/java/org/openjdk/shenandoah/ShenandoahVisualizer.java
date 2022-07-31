@@ -274,7 +274,7 @@ class ShenandoahVisualizer {
             }
         });
         final boolean isReplayFinal = isReplay;
-        regionsPanel.addMouseListener(new MouseListener() {
+        regionsPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Snapshot snapshot;
@@ -289,7 +289,7 @@ class ShenandoahVisualizer {
                 int cols = regionWidth[0] / sqSize;
                 int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
-                    renderRunner.playback.isPaused = true;
+//                    renderRunner.playback.isPaused = true;
                     RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
                     popup.setSize(310, 310);
                     popup.setLocation(e.getX(), e.getY());
@@ -298,34 +298,17 @@ class ShenandoahVisualizer {
                         @Override
                         public void windowClosing(WindowEvent e) {
                             super.windowClosing(e);
-                            renderRunner.playback.isPaused = false;
+//                            renderRunner.playback.isPaused = false;
                             popup.setVisible(false);
                             popup.dispose();
+                            renderRunner.setPopup(null);
                         }
                     });
+                    renderRunner.setPopup(popup);
                 }
 
             }
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
 
         graphPanel.addComponentListener(new ComponentAdapter() {
@@ -409,6 +392,8 @@ class ShenandoahVisualizer {
         public static final int LINE = 15;
 
         final JFrame frame;
+
+        RegionPopUp popup = null;
 
         int regionWidth, regionHeight;
         int graphWidth, graphHeight;
@@ -585,6 +570,10 @@ class ShenandoahVisualizer {
             this.graphWidth = width;
             this.graphHeight = height;
         }
+
+        public void setPopup(RegionPopUp popup) {
+            this.popup = popup;
+        }
     }
 
     public static class RenderLive extends Render {
@@ -611,6 +600,10 @@ class ShenandoahVisualizer {
                     lastSnapshots.removeFirst();
                 }
                 frame.repaint();
+                if (popup != null) {
+                    popup.setSnapshot(snapshot);
+                    popup.repaint();
+                }
             }
         }
 
@@ -784,6 +777,10 @@ class ShenandoahVisualizer {
                     if (data.snapshotTimeHasOccurred(snapshot)) {
                         endSnapshotIndex++;
                         frame.repaint();
+                        if (popup != null) {
+                            popup.setSnapshot(snapshot);
+                            popup.repaint();
+                        }
                     }
                 } else {
                     Snapshot cur = data.snapshot();
@@ -795,6 +792,10 @@ class ShenandoahVisualizer {
                             frontSnapshotIndex++;
                         }
                         frame.repaint();
+                        if (popup != null) {
+                            popup.setSnapshot(snapshot);
+                            popup.repaint();
+                        }
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
@@ -817,6 +818,10 @@ class ShenandoahVisualizer {
 
             snapshot = data.getSnapshotAtTime(time);
             frame.repaint();
+            if (popup != null) {
+                popup.setSnapshot(snapshot);
+                popup.repaint();
+            }
         }
 
         public synchronized void stepForwardSnapshots(int n) {
@@ -847,6 +852,10 @@ class ShenandoahVisualizer {
             }
 
             frame.repaint();
+            if (popup != null) {
+                popup.setSnapshot(snapshot);
+                popup.repaint();
+            }
         }
 
         private synchronized void loadLogDataProvider(DataLogProvider data) {
@@ -1059,6 +1068,13 @@ class ShenandoahVisualizer {
         public synchronized void notifyGraphResized(int width, int height) {
             live.notifyGraphResized(width, height);
             playback.notifyGraphResized(width, height);
+        }
+        public void setPopup(RegionPopUp popup) {
+            if (isLive) {
+                this.live.setPopup(popup);
+            } else {
+                this.playback.setPopup(popup);
+            }
         }
     }
 }

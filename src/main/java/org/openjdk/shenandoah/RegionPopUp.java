@@ -51,17 +51,16 @@ public class RegionPopUp extends JFrame {
         };
         this.add(detailedState);
 //        System.out.println(regionNumber);
-        if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
-            usedLvl = snapshot.get(regionNumber).used() * 100f;
-            liveLvl = snapshot.get(regionNumber).live() * 100f;
-            tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
-            gclabLvl = snapshot.get(regionNumber).gclabAllocs() * 100f;
-            plabLvl = snapshot.get(regionNumber).plabAllocs() * 100f;
-            sharedLvl = snapshot.get(regionNumber).sharedAllocs() * 100f;
-            state = snapshot.get(regionNumber).state();
-            age = snapshot.get(regionNumber).age();
-            affiliation = snapshot.get(regionNumber).affiliation();
-        }
+        usedLvl = snapshot.get(regionNumber).used() * 100f;
+        liveLvl = snapshot.get(regionNumber).live() * 100f;
+        tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
+        gclabLvl = snapshot.get(regionNumber).gclabAllocs() * 100f;
+        plabLvl = snapshot.get(regionNumber).plabAllocs() * 100f;
+        sharedLvl = snapshot.get(regionNumber).sharedAllocs() * 100f;
+        state = snapshot.get(regionNumber).state();
+        age = snapshot.get(regionNumber).age();
+        affiliation = snapshot.get(regionNumber).affiliation();
+
 
     }
     public synchronized void renderDetailedRegion(Graphics g) {
@@ -76,6 +75,20 @@ public class RegionPopUp extends JFrame {
         g.drawString("State: " + state, 20, 170);
         g.drawString("Age: " + age, 20, 190);
         g.drawString("Affiliation: " + affiliation, 20, 210);
+
+    }
+
+    public void setSnapshot(Snapshot snapshot) {
+        this.snapshot = snapshot;
+        usedLvl = snapshot.get(regionNumber).used() * 100f;
+        liveLvl = snapshot.get(regionNumber).live() * 100f;
+        tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
+        gclabLvl = snapshot.get(regionNumber).gclabAllocs() * 100f;
+        plabLvl = snapshot.get(regionNumber).plabAllocs() * 100f;
+        sharedLvl = snapshot.get(regionNumber).sharedAllocs() * 100f;
+        state = snapshot.get(regionNumber).state();
+        age = snapshot.get(regionNumber).age();
+        affiliation = snapshot.get(regionNumber).affiliation();
 
     }
 }
