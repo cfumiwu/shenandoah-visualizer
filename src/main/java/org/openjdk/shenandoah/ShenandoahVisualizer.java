@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -290,7 +291,6 @@ class ShenandoahVisualizer {
                 int cols = regionWidth[0] / sqSize;
                 int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
-//                    renderRunner.playback.isPaused = true;
                     RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
                     popup.setSize(310, 310);
                     popup.setLocation(e.getX(), e.getY());
@@ -299,13 +299,12 @@ class ShenandoahVisualizer {
                         @Override
                         public void windowClosing(WindowEvent e) {
                             super.windowClosing(e);
-//                            renderRunner.playback.isPaused = false;
                             popup.setVisible(false);
                             popup.dispose();
                             renderRunner.deletePopup(popup);
                         }
                     });
-                    renderRunner.setPopup(popup);
+                    renderRunner.addPopup(popup);
                 }
 
             }
@@ -394,7 +393,7 @@ class ShenandoahVisualizer {
 
         final JFrame frame;
 
-        ArrayList<RegionPopUp> popups = new ArrayList<RegionPopUp> ();
+        List<RegionPopUp> popups = new ArrayList<RegionPopUp>();
 
         int regionWidth, regionHeight;
         int graphWidth, graphHeight;
@@ -572,11 +571,19 @@ class ShenandoahVisualizer {
             this.graphHeight = height;
         }
 
-        public void setPopup(RegionPopUp popup) {
+        public void addPopup(RegionPopUp popup) {
             popups.add(popup);
         }
         public void deletePopup(RegionPopUp popup) {
             popups.remove(popup);
+        }
+        public void repaintPopups() {
+            if (popups != null) {
+                for (RegionPopUp popup : popups) {
+                    popup.setSnapshot(snapshot);
+                    popup.repaint();
+                }
+            }
         }
     }
 
@@ -604,12 +611,7 @@ class ShenandoahVisualizer {
                     lastSnapshots.removeFirst();
                 }
                 frame.repaint();
-                if (popups != null) {
-                    for (RegionPopUp popup : popups) {
-                        popup.setSnapshot(snapshot);
-                        popup.repaint();
-                    }
-                }
+                repaintPopups();
             }
         }
 
@@ -783,12 +785,7 @@ class ShenandoahVisualizer {
                     if (data.snapshotTimeHasOccurred(snapshot)) {
                         endSnapshotIndex++;
                         frame.repaint();
-                        if (popups != null) {
-                            for (RegionPopUp popup : popups) {
-                                popup.setSnapshot(snapshot);
-                                popup.repaint();
-                            }
-                        }
+                        repaintPopups();
                     }
                 } else {
                     Snapshot cur = data.snapshot();
@@ -800,12 +797,7 @@ class ShenandoahVisualizer {
                             frontSnapshotIndex++;
                         }
                         frame.repaint();
-                        if (popups != null) {
-                            for (RegionPopUp popup : popups) {
-                                popup.setSnapshot(snapshot);
-                                popup.repaint();
-                            }
-                        }
+                        repaintPopups();
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
@@ -828,12 +820,7 @@ class ShenandoahVisualizer {
 
             snapshot = data.getSnapshotAtTime(time);
             frame.repaint();
-            if (popups != null) {
-                for (RegionPopUp popup : popups) {
-                    popup.setSnapshot(snapshot);
-                    popup.repaint();
-                }
-            }
+            repaintPopups();
         }
 
         public synchronized void stepForwardSnapshots(int n) {
@@ -864,12 +851,7 @@ class ShenandoahVisualizer {
             }
 
             frame.repaint();
-            if (popups != null) {
-                for (RegionPopUp popup : popups) {
-                    popup.setSnapshot(snapshot);
-                    popup.repaint();
-                }
-            }
+            repaintPopups();
         }
 
         private synchronized void loadLogDataProvider(DataLogProvider data) {
@@ -1083,11 +1065,11 @@ class ShenandoahVisualizer {
             live.notifyGraphResized(width, height);
             playback.notifyGraphResized(width, height);
         }
-        public void setPopup(RegionPopUp popup) {
+        public void addPopup(RegionPopUp popup) {
             if (isLive) {
-                this.live.setPopup(popup);
+                this.live.addPopup(popup);
             } else {
-                this.playback.setPopup(popup);
+                this.playback.addPopup(popup);
             }
         }
         public void deletePopup(RegionPopUp popup) {
