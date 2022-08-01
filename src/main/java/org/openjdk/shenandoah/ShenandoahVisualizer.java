@@ -31,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -301,7 +302,7 @@ class ShenandoahVisualizer {
 //                            renderRunner.playback.isPaused = false;
                             popup.setVisible(false);
                             popup.dispose();
-                            renderRunner.setPopup(null);
+                            renderRunner.deletePopup(popup);
                         }
                     });
                     renderRunner.setPopup(popup);
@@ -393,7 +394,7 @@ class ShenandoahVisualizer {
 
         final JFrame frame;
 
-        RegionPopUp popup = null;
+        ArrayList<RegionPopUp> popups = new ArrayList<RegionPopUp> ();
 
         int regionWidth, regionHeight;
         int graphWidth, graphHeight;
@@ -572,7 +573,10 @@ class ShenandoahVisualizer {
         }
 
         public void setPopup(RegionPopUp popup) {
-            this.popup = popup;
+            popups.add(popup);
+        }
+        public void deletePopup(RegionPopUp popup) {
+            popups.remove(popup);
         }
     }
 
@@ -600,9 +604,11 @@ class ShenandoahVisualizer {
                     lastSnapshots.removeFirst();
                 }
                 frame.repaint();
-                if (popup != null) {
-                    popup.setSnapshot(snapshot);
-                    popup.repaint();
+                if (popups != null) {
+                    for (RegionPopUp popup : popups) {
+                        popup.setSnapshot(snapshot);
+                        popup.repaint();
+                    }
                 }
             }
         }
@@ -777,9 +783,11 @@ class ShenandoahVisualizer {
                     if (data.snapshotTimeHasOccurred(snapshot)) {
                         endSnapshotIndex++;
                         frame.repaint();
-                        if (popup != null) {
-                            popup.setSnapshot(snapshot);
-                            popup.repaint();
+                        if (popups != null) {
+                            for (RegionPopUp popup : popups) {
+                                popup.setSnapshot(snapshot);
+                                popup.repaint();
+                            }
                         }
                     }
                 } else {
@@ -792,9 +800,11 @@ class ShenandoahVisualizer {
                             frontSnapshotIndex++;
                         }
                         frame.repaint();
-                        if (popup != null) {
-                            popup.setSnapshot(snapshot);
-                            popup.repaint();
+                        if (popups != null) {
+                            for (RegionPopUp popup : popups) {
+                                popup.setSnapshot(snapshot);
+                                popup.repaint();
+                            }
                         }
                     }
                 }
@@ -818,9 +828,11 @@ class ShenandoahVisualizer {
 
             snapshot = data.getSnapshotAtTime(time);
             frame.repaint();
-            if (popup != null) {
-                popup.setSnapshot(snapshot);
-                popup.repaint();
+            if (popups != null) {
+                for (RegionPopUp popup : popups) {
+                    popup.setSnapshot(snapshot);
+                    popup.repaint();
+                }
             }
         }
 
@@ -852,9 +864,11 @@ class ShenandoahVisualizer {
             }
 
             frame.repaint();
-            if (popup != null) {
-                popup.setSnapshot(snapshot);
-                popup.repaint();
+            if (popups != null) {
+                for (RegionPopUp popup : popups) {
+                    popup.setSnapshot(snapshot);
+                    popup.repaint();
+                }
             }
         }
 
@@ -1074,6 +1088,13 @@ class ShenandoahVisualizer {
                 this.live.setPopup(popup);
             } else {
                 this.playback.setPopup(popup);
+            }
+        }
+        public void deletePopup(RegionPopUp popup) {
+            if (isLive) {
+                this.live.deletePopup(popup);
+            } else {
+                this.playback.deletePopup(popup);
             }
         }
     }

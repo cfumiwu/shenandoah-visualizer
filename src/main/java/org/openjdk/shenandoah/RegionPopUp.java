@@ -51,15 +51,7 @@ public class RegionPopUp extends JFrame {
         };
         this.add(detailedState);
 //        System.out.println(regionNumber);
-        usedLvl = snapshot.get(regionNumber).used() * 100f;
-        liveLvl = snapshot.get(regionNumber).live() * 100f;
-        tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
-        gclabLvl = snapshot.get(regionNumber).gclabAllocs() * 100f;
-        plabLvl = snapshot.get(regionNumber).plabAllocs() * 100f;
-        sharedLvl = snapshot.get(regionNumber).sharedAllocs() * 100f;
-        state = snapshot.get(regionNumber).state();
-        age = snapshot.get(regionNumber).age();
-        affiliation = snapshot.get(regionNumber).affiliation();
+        setSnapshot(snapshot);
 
 
     }
@@ -78,17 +70,18 @@ public class RegionPopUp extends JFrame {
 
     }
 
-    public void setSnapshot(Snapshot snapshot) {
+    public final void setSnapshot(Snapshot snapshot) {
         this.snapshot = snapshot;
-        usedLvl = snapshot.get(regionNumber).used() * 100f;
-        liveLvl = snapshot.get(regionNumber).live() * 100f;
-        tlabLvl = snapshot.get(regionNumber).tlabAllocs() * 100f;
-        gclabLvl = snapshot.get(regionNumber).gclabAllocs() * 100f;
-        plabLvl = snapshot.get(regionNumber).plabAllocs() * 100f;
-        sharedLvl = snapshot.get(regionNumber).sharedAllocs() * 100f;
-        state = snapshot.get(regionNumber).state();
-        age = snapshot.get(regionNumber).age();
-        affiliation = snapshot.get(regionNumber).affiliation();
+        RegionStat regionData = snapshot.get(regionNumber);
+        usedLvl = regionData.used() * 100f;
+        liveLvl = regionData.live() * 100f;
+        tlabLvl = regionData.tlabAllocs() * 100f;
+        gclabLvl = regionData.gclabAllocs() * 100f;
+        plabLvl = regionData.plabAllocs() * 100f;
+        sharedLvl = regionData.sharedAllocs() * 100f;
+        state = regionData.state();
+        age = regionData.age();
+        affiliation = regionData.affiliation();
 
     }
 }
