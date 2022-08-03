@@ -85,6 +85,7 @@ public class RegionPopUp extends JFrame {
                 if (startIndex > 0) {
                     startIndex--;
                 }
+                timelinePanel.repaint();
             }
         });
 
@@ -97,6 +98,7 @@ public class RegionPopUp extends JFrame {
                 } else {
                     noAutomaticScroll = false;
                 }
+                timelinePanel.repaint();
             }
         });
 
@@ -104,6 +106,7 @@ public class RegionPopUp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 noAutomaticScroll = false;
+                timelinePanel.repaint();
             }
         });
 
