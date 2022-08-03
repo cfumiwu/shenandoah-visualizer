@@ -26,6 +26,10 @@ package org.openjdk.shenandoah;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 public class RegionPopUp extends JFrame {
     private int regionNumber;
@@ -38,24 +42,71 @@ public class RegionPopUp extends JFrame {
     private RegionState state;
     private long age;
     private RegionAffiliation affiliation;
+    int start = 0;
 
     Snapshot snapshot;
+
+    List<Snapshot> snapshots = new LinkedList<Snapshot>();
 
     public RegionPopUp(Snapshot snapshot, int regionNumber) {
         this.snapshot = snapshot;
         this.regionNumber = regionNumber;
-        JPanel detailedState = new JPanel() {
+        JPanel detailedStatePanel = new JPanel() {
             public void paint(Graphics g) {
-                renderDetailedRegion(g);
+                detailedStatePaint(g);
             }
         };
-        this.add(detailedState);
+        JPanel timelinePanel = new JPanel() {
+            public void paint (Graphics g) {
+                timelinePaint(g);
+            }
+        };
 //        System.out.println(regionNumber);
         setSnapshot(snapshot);
 
+        this.setLayout(new GridBagLayout());
+
+        Insets pad = new Insets(5, 5, 5, 5);
+
+        {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 0;
+            c.gridy = 0;
+            c.weightx = 3;
+            c.weighty = 3;
+            c.insets = pad;
+            this.add(detailedStatePanel, c);
+        }
+        {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 1;
+            c.gridy = 0;
+            c.weightx = 3;
+            c.weighty = 3;
+            c.insets = pad;
+            this.add(timelinePanel, c);
+        }
+
 
     }
-    public synchronized void renderDetailedRegion(Graphics g) {
+    public synchronized void timelinePaint(Graphics g) {
+        int y = 5;
+        for (int i = 0; i < snapshots.size(); i++) {
+            if (i < 23) {
+                RegionStat r = snapshots.get(i + start).get(regionNumber);
+                r.render(g, 20, y, 15, 15);
+                y += 15;
+            }
+            if (start < snapshots.size() - 23){
+                start++;
+            }
+
+        }
+
+    }
+    public synchronized void detailedStatePaint(Graphics g) {
         g.setColor(Color.BLACK);
         g.drawString("Region index: " + regionNumber, 20, 30);
         g.drawString("Used Level: " + usedLvl + " %", 20, 50);
@@ -83,6 +134,9 @@ public class RegionPopUp extends JFrame {
         age = regionData.age();
         affiliation = regionData.affiliation();
 
+    }
+    public final void setSnapshots(LinkedList<Snapshot> snapshots) {
+        this.snapshots = snapshots;
     }
 }
 

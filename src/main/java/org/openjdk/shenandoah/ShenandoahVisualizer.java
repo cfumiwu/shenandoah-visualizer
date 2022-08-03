@@ -292,7 +292,7 @@ class ShenandoahVisualizer {
                 int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
                     RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
-                    popup.setSize(310, 310);
+                    popup.setSize(400, 400);
                     popup.setLocation(e.getX(), e.getY());
                     popup.setVisible(true);
                     popup.addWindowListener(new WindowAdapter() {
@@ -400,11 +400,13 @@ class ShenandoahVisualizer {
         final int STEP_X = 2;
 
         final LinkedList<SnapshotView> lastSnapshots;
+        final LinkedList<Snapshot> snapshots;
         volatile Snapshot snapshot;
 
         public Render(JFrame frame) {
             this.frame = frame;
             this.lastSnapshots = new LinkedList<>();
+            this.snapshots = new LinkedList<>();
         }
 
         protected static Color getColor(SnapshotView s) {
@@ -581,6 +583,7 @@ class ShenandoahVisualizer {
             if (popups != null) {
                 for (RegionPopUp popup : popups) {
                     popup.setSnapshot(snapshot);
+                    popup.setSnapshots(snapshots);
                     popup.repaint();
                 }
             }
@@ -607,6 +610,7 @@ class ShenandoahVisualizer {
             if (!cur.equals(snapshot)) {
                 snapshot = cur;
                 lastSnapshots.add(new SnapshotView(cur));
+                snapshots.add(cur);
                 if (lastSnapshots.size() > graphWidth / STEP_X) {
                     lastSnapshots.removeFirst();
                 }
@@ -619,6 +623,7 @@ class ShenandoahVisualizer {
             closeDataProvider();
             this.data = data;
             this.lastSnapshots.clear();
+            this.snapshots.clear();
             this.snapshot = data.snapshot();
         }
 
@@ -792,6 +797,7 @@ class ShenandoahVisualizer {
                     if (!cur.equals(snapshot)) {
                         snapshot = cur;
                         lastSnapshots.add(new SnapshotView(cur));
+                        snapshots.add(cur);
                         endSnapshotIndex = lastSnapshots.size();
                         if (lastSnapshots.size() - frontSnapshotIndex > graphWidth / STEP_X) {
                             frontSnapshotIndex++;
@@ -841,6 +847,7 @@ class ShenandoahVisualizer {
 
                     snapshot = cur;
                     lastSnapshots.add(new SnapshotView(cur));
+                    snapshots.add(cur);
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
@@ -857,6 +864,7 @@ class ShenandoahVisualizer {
         private synchronized void loadLogDataProvider(DataLogProvider data) {
             this.data = data;
             this.lastSnapshots.clear();
+            this.snapshots.clear();
             this.snapshot = data.snapshot();
             this.isPaused = false;
             this.speed = 1.0;
