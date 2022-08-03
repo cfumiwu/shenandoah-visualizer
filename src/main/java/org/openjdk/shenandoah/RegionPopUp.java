@@ -26,10 +26,9 @@ package org.openjdk.shenandoah;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Iterator;
+import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 public class RegionPopUp extends JFrame {
     private int regionNumber;
@@ -42,7 +41,12 @@ public class RegionPopUp extends JFrame {
     private RegionState state;
     private long age;
     private RegionAffiliation affiliation;
-    int start = 0;
+    private int startIndex = 0;
+    private int numberOfShowRegions = 23;
+    private int initialY = 5;
+    private int squareWidth = 15;
+    private int squareHeight = 15;
+    private boolean noAutomaticScroll = false;
 
     Snapshot snapshot;
 
@@ -61,6 +65,66 @@ public class RegionPopUp extends JFrame {
                 timelinePaint(g);
             }
         };
+        timelinePanel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                super.mouseMoved(e);
+
+            }
+        });
+        JPanel controlPanel = new JPanel();
+        JButton stepbackButton = new JButton("-1");
+        JButton stepforwardButton = new JButton("+1");
+        JButton realtimeButton = new JButton("Realtime");
+        JButton pauseButton = new JButton("Pause");
+
+        stepbackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                noAutomaticScroll = true;
+                if (startIndex > 0) {
+                    startIndex--;
+                }
+            }
+        });
+
+        stepforwardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ((startIndex + 1) < (snapshots.size() - numberOfShowRegions)) {
+                    noAutomaticScroll = true;
+                    startIndex++;
+                } else {
+                    noAutomaticScroll = false;
+                }
+            }
+        });
+
+        realtimeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                noAutomaticScroll = false;
+            }
+        });
+
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                noAutomaticScroll = true;
+            }
+        });
+
+        stepbackButton.setBounds(0, 5, 25, 20);
+        stepforwardButton.setBounds(25, 5, 25, 20);
+        realtimeButton.setBounds(50, 5, 70, 20);
+        pauseButton.setBounds(30, 25, 60,20);
+
+        controlPanel.setLayout(null);
+        controlPanel.add(stepbackButton);
+        controlPanel.add(stepforwardButton);
+        controlPanel.add(realtimeButton);
+        controlPanel.add(pauseButton);
+
 //        System.out.println(regionNumber);
         setSnapshot(snapshot);
 
@@ -74,7 +138,7 @@ public class RegionPopUp extends JFrame {
             c.gridx = 0;
             c.gridy = 0;
             c.weightx = 3;
-            c.weighty = 3;
+            c.weighty = 5;
             c.insets = pad;
             this.add(detailedStatePanel, c);
         }
@@ -83,24 +147,35 @@ public class RegionPopUp extends JFrame {
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 1;
             c.gridy = 0;
-            c.weightx = 3;
-            c.weighty = 3;
+            c.weightx = 1;
+            c.weighty = 5;
             c.insets = pad;
             this.add(timelinePanel, c);
         }
+        {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 2;
+            c.gridy = 0;
+            c.weightx = 3;
+            c.weighty = 5;
+            c.insets = pad;
+            this.add(controlPanel, c);
+        }
+
 
 
     }
     public synchronized void timelinePaint(Graphics g) {
-        int y = 5;
+        int y = initialY;
         for (int i = 0; i < snapshots.size(); i++) {
-            if (i < 23) {
-                RegionStat r = snapshots.get(i + start).get(regionNumber);
-                r.render(g, 20, y, 15, 15);
-                y += 15;
+            if (i < numberOfShowRegions) {
+                RegionStat r = snapshots.get(i + startIndex).get(regionNumber);
+                r.render(g, 20, y, squareWidth, squareHeight);
+                y += squareHeight;
             }
-            if (start < snapshots.size() - 23){
-                start++;
+            if (startIndex < snapshots.size() - numberOfShowRegions && !noAutomaticScroll){
+                startIndex++;
             }
 
         }
@@ -118,6 +193,9 @@ public class RegionPopUp extends JFrame {
         g.drawString("State: " + state, 20, 170);
         g.drawString("Age: " + age, 20, 190);
         g.drawString("Affiliation: " + affiliation, 20, 210);
+
+    }
+    public synchronized void controlPaint(Graphics g) {
 
     }
 
