@@ -121,10 +121,10 @@ public class RegionPopUp extends JFrame {
             }
         });
 
-        stepbackButton.setBounds(0, 5, 25, 20);
-        stepforwardButton.setBounds(25, 5, 25, 20);
-        realtimeButton.setBounds(50, 5, 70, 20);
-        pauseButton.setBounds(30, 25, 60,20);
+        stepbackButton.setBounds(20, 5, 25, 20);
+        stepforwardButton.setBounds(45, 5, 25, 20);
+        realtimeButton.setBounds(70, 5, 70, 20);
+        pauseButton.setBounds(50, 25, 60,20);
 
         controlPanel.setLayout(null);
         controlPanel.add(stepbackButton);
@@ -145,31 +145,33 @@ public class RegionPopUp extends JFrame {
             c.gridx = 0;
             c.gridy = 0;
             c.weightx = 4;
-            c.weighty = 7;
+            c.weighty = 4;
             c.insets = pad;
             this.add(detailedStatePanel, c);
         }
+
         {
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 1;
             c.gridy = 0;
-            c.weightx = 1;
+            c.weightx = 3;
             c.weighty = 7;
             c.insets = pad;
-            c.gridheight = GridBagConstraints.RELATIVE;
+            c.gridheight = 2;
             this.add(timelinePanel, c);
         }
         {
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
-            c.gridx = 2;
-            c.gridy = 0;
+            c.gridx = 0;
+            c.gridy = 1;
             c.weightx = 3;
-            c.weighty = 7;
+            c.weighty = 3;
             c.insets = pad;
             this.add(controlPanel, c);
         }
+
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -183,11 +185,15 @@ public class RegionPopUp extends JFrame {
     }
     public synchronized void timelinePaint(Graphics g) {
         int y = initialY;
-        for (int i = 0; i < snapshots.size(); i++) {
-            if (i < numberOfShowRegions && (i + startIndex) < snapshots.size()) {
-                RegionStat r = snapshots.get(i + startIndex).get(regionNumber);
-                r.render(g, 20, y, squareWidth, squareHeight);
+        for (int i = snapshots.size() - 1; i >= 0; i--) {
+            int index = i + startIndex;
+            if (i < numberOfShowRegions && index < snapshots.size()) {
+                RegionStat r = snapshots.get(index).get(regionNumber);
+                r.render(g, 0, y, squareWidth, squareHeight);
                 y += squareHeight;
+                if (i % 10 == 0) {
+                    g.drawString(Long.toString(snapshots.get(index).time()) + " ms", 18, y);
+                }
             }
             if (startIndex < snapshots.size() - numberOfShowRegions && !noAutomaticScroll){
                 startIndex++;
