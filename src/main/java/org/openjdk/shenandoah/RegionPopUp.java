@@ -45,8 +45,8 @@ public class RegionPopUp extends JFrame {
     private int frameHeight;
     private int squareWidth = 15;
     private int squareHeight = 15;
-    private int numberOfShowRegions = 23;
-    private int initialY = 5;
+    private int numberOfShowRegions = 25;
+    private int initialY = 1;
     private boolean noAutomaticScroll = false;
 
     Snapshot snapshot;
@@ -56,11 +56,13 @@ public class RegionPopUp extends JFrame {
     public RegionPopUp(Snapshot snapshot, int regionNumber) {
         this.snapshot = snapshot;
         this.regionNumber = regionNumber;
+
         JPanel detailedStatePanel = new JPanel() {
             public void paint(Graphics g) {
                 detailedStatePaint(g);
             }
         };
+
         JPanel timelinePanel = new JPanel() {
             public void paint (Graphics g) {
                 timelinePaint(g);
@@ -73,6 +75,7 @@ public class RegionPopUp extends JFrame {
 
             }
         });
+
         JPanel controlPanel = new JPanel();
         JButton stepbackButton = new JButton("-1");
         JButton stepforwardButton = new JButton("+1");
