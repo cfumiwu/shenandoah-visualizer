@@ -42,10 +42,11 @@ public class RegionPopUp extends JFrame {
     private long age;
     private RegionAffiliation affiliation;
     private int startIndex = 0;
-    private int numberOfShowRegions = 23;
-    private int initialY = 5;
+    private int frameHeight;
     private int squareWidth = 15;
     private int squareHeight = 15;
+    private int numberOfShowRegions = 23;
+    private int initialY = 5;
     private boolean noAutomaticScroll = false;
 
     Snapshot snapshot;
@@ -133,15 +134,15 @@ public class RegionPopUp extends JFrame {
 
         this.setLayout(new GridBagLayout());
 
-        Insets pad = new Insets(5, 5, 5, 5);
+        Insets pad = new Insets(7, 7, 7, 7);
 
         {
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 0;
             c.gridy = 0;
-            c.weightx = 3;
-            c.weighty = 5;
+            c.weightx = 4;
+            c.weighty = 7;
             c.insets = pad;
             this.add(detailedStatePanel, c);
         }
@@ -151,8 +152,9 @@ public class RegionPopUp extends JFrame {
             c.gridx = 1;
             c.gridy = 0;
             c.weightx = 1;
-            c.weighty = 5;
+            c.weighty = 7;
             c.insets = pad;
+            c.gridheight = GridBagConstraints.RELATIVE;
             this.add(timelinePanel, c);
         }
         {
@@ -161,18 +163,25 @@ public class RegionPopUp extends JFrame {
             c.gridx = 2;
             c.gridy = 0;
             c.weightx = 3;
-            c.weighty = 5;
+            c.weighty = 7;
             c.insets = pad;
             this.add(controlPanel, c);
         }
-
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                frameHeight = e.getComponent().getHeight();
+                numberOfShowRegions = (frameHeight / squareHeight) - 3;
+            }
+        });
 
 
     }
     public synchronized void timelinePaint(Graphics g) {
         int y = initialY;
         for (int i = 0; i < snapshots.size(); i++) {
-            if (i < numberOfShowRegions) {
+            if (i < numberOfShowRegions && (i + startIndex) < snapshots.size()) {
                 RegionStat r = snapshots.get(i + startIndex).get(regionNumber);
                 r.render(g, 20, y, squareWidth, squareHeight);
                 y += squareHeight;
@@ -196,9 +205,6 @@ public class RegionPopUp extends JFrame {
         g.drawString("State: " + state, 20, 170);
         g.drawString("Age: " + age, 20, 190);
         g.drawString("Affiliation: " + affiliation, 20, 210);
-
-    }
-    public synchronized void controlPaint(Graphics g) {
 
     }
 
