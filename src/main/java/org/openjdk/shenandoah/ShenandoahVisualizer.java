@@ -790,7 +790,6 @@ class ShenandoahVisualizer {
                     if (data.snapshotTimeHasOccurred(snapshot)) {
                         endSnapshotIndex++;
                         frame.repaint();
-                        repaintPopups();
                     }
                 } else {
                     Snapshot cur = data.snapshot();
@@ -803,7 +802,6 @@ class ShenandoahVisualizer {
                             frontSnapshotIndex++;
                         }
                         frame.repaint();
-                        repaintPopups();
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
@@ -812,6 +810,7 @@ class ShenandoahVisualizer {
                     isPaused = true;
                 }
             }
+            repaintPopups();
         }
 
         public synchronized void stepBackSnapshots(int n) {
