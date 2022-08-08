@@ -32,15 +32,6 @@ import java.util.List;
 
 public class RegionPopUp extends JFrame {
     private int regionNumber;
-    private float usedLvl;
-    private float liveLvl;
-    private float tlabLvl;
-    private float gclabLvl;
-    private float plabLvl;
-    private float sharedLvl;
-    private RegionState state;
-    private long age;
-    private RegionAffiliation affiliation;
     private float spotlightUsedLvl;
     private float spotlightLiveLvl;
     private float spotlightTlabLvl;
@@ -68,12 +59,6 @@ public class RegionPopUp extends JFrame {
         this.snapshot = snapshot;
         this.regionNumber = regionNumber;
 
-        JPanel detailedStatePanel = new JPanel() {
-            public void paint(Graphics g) {
-                detailedStatePaint(g);
-            }
-        };
-
         JPanel timelinePanel = new JPanel() {
             public void paint (Graphics g) {
                 timelinePaint(g);
@@ -87,7 +72,7 @@ public class RegionPopUp extends JFrame {
         };
         JButton stepbackButton = new JButton("-1");
         JButton stepforwardButton = new JButton("+1");
-        JButton realtimeButton = new JButton("Realtime");
+        JButton realtimeButton = new JButton("Syncing");
         JButton pauseButton = new JButton("Pause");
 
         stepbackButton.addActionListener(new ActionListener() {
@@ -142,8 +127,6 @@ public class RegionPopUp extends JFrame {
         controlPanel.add(realtimeButton);
         controlPanel.add(pauseButton);
 
-//        System.out.println(regionNumber);
-        setSnapshot(snapshot);
 
         this.setLayout(new GridBagLayout());
 
@@ -154,10 +137,10 @@ public class RegionPopUp extends JFrame {
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 0;
             c.gridy = 0;
-            c.weightx = 4.5;
-            c.weighty = 4;
+            c.weightx = 4;
+            c.weighty = 5;
             c.insets = pad;
-            this.add(detailedStatePanel, c);
+            this.add(spotlightPanel, c);
         }
 
         {
@@ -165,7 +148,7 @@ public class RegionPopUp extends JFrame {
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 1;
             c.gridy = 0;
-            c.weightx = 2.5;
+            c.weightx = 3;
             c.weighty = 7;
             c.insets = pad;
             c.gridheight = 2;
@@ -177,20 +160,11 @@ public class RegionPopUp extends JFrame {
             c.gridx = 0;
             c.gridy = 1;
             c.weightx = 3;
-            c.weighty = 3;
+            c.weighty = 2;
             c.insets = pad;
             this.add(controlPanel, c);
         }
-        {
-            GridBagConstraints c = new GridBagConstraints();
-            c.fill = GridBagConstraints.BOTH;
-            c.gridx = 2;
-            c.gridy = 0;
-            c.weightx = 4;
-            c.weighty = 5;
-            c.insets = pad;
-            this.add(spotlightPanel, c);
-        }
+
 
         this.addComponentListener(new ComponentAdapter() {
             @Override
@@ -234,46 +208,23 @@ public class RegionPopUp extends JFrame {
         }
 
     }
-    public synchronized void detailedStatePaint(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.drawString("Region index: " + regionNumber, 10, 30);
-        g.drawString("Used Level: " + usedLvl + " %", 10, 50);
-        g.drawString("Live Level: " + liveLvl + " %", 10, 70);
-        g.drawString("TLAB Level: " + tlabLvl + " %", 10, 90);
-        g.drawString("GCLAB Level: " + gclabLvl + " %", 10, 110);
-        g.drawString("PLAB Level: " + plabLvl + " %", 10, 130);
-        g.drawString("Shared Level: " + sharedLvl + " %", 10, 150);
-        g.drawString("State: " + state, 10, 170);
-        g.drawString("Age: " + age, 10, 190);
-        g.drawString("Affiliation: " + affiliation, 10, 210);
 
-    }
     public synchronized void spotlightPaint(Graphics g) {
         g.setColor(Color.BLACK);
-        g.drawString("Spotlight Region Data", 0, 30);
-        g.drawString("Used Level: " + spotlightUsedLvl + " %", 0, 50);
-        g.drawString("Live Level: " + spotlightLiveLvl + " %", 0, 70);
-        g.drawString("TLAB Level: " + spotlightTlabLvl + " %", 0, 90);
-        g.drawString("GCLAB Level: " + spotlightGclabLvl + " %", 0, 110);
-        g.drawString("PLAB Level: " + spotlightPlabLvl + " %", 0, 130);
-        g.drawString("Shared Level: " + spotlightSharedLvl + " %", 0, 150);
-        g.drawString("State: " + spotlightState, 0, 170);
-        g.drawString("Age: " + spotlightAge, 0, 190);
-        g.drawString("Affiliation: " + spotlightAffiliation, 0, 210);
+        g.drawString("Spotlight Region Data", 20, 30);
+        g.drawString("Region index: " + regionNumber, 20, 50);
+        g.drawString("Used Level: " + spotlightUsedLvl + " %", 20, 70);
+        g.drawString("Live Level: " + spotlightLiveLvl + " %", 20, 90);
+        g.drawString("TLAB Level: " + spotlightTlabLvl + " %", 20, 110);
+        g.drawString("GCLAB Level: " + spotlightGclabLvl + " %", 20, 130);
+        g.drawString("PLAB Level: " + spotlightPlabLvl + " %", 20, 150);
+        g.drawString("Shared Level: " + spotlightSharedLvl + " %", 20, 170);
+        g.drawString("State: " + spotlightState, 20, 190);
+        g.drawString("Age: " + spotlightAge, 20, 210);
+        g.drawString("Affiliation: " + spotlightAffiliation, 20, 230);
     }
     public final void setSnapshot(Snapshot snapshot) {
         this.snapshot = snapshot;
-        RegionStat regionData = snapshot.get(regionNumber);
-        usedLvl = regionData.used() * 100f;
-        liveLvl = regionData.live() * 100f;
-        tlabLvl = regionData.tlabAllocs() * 100f;
-        gclabLvl = regionData.gclabAllocs() * 100f;
-        plabLvl = regionData.plabAllocs() * 100f;
-        sharedLvl = regionData.sharedAllocs() * 100f;
-        state = regionData.state();
-        age = regionData.age();
-        affiliation = regionData.affiliation();
-
     }
     public final void setSnapshots(LinkedList<Snapshot> snapshots) {
         this.snapshots = snapshots;

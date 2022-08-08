@@ -285,14 +285,13 @@ class ShenandoahVisualizer {
                 } else {
                     snapshot = renderRunner.live.snapshot;
                 }
-//                System.out.println(e.getX() + ", " + e.getY());
                 int area = regionWidth[0] * regionHeight[0];
                 int sqSize = Math.max(1, (int) Math.sqrt(1D * area / snapshot.regionCount()));
                 int cols = regionWidth[0] / sqSize;
                 int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
                     RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
-                    popup.setSize(550, 450);
+                    popup.setSize(450, 450);
                     popup.setLocation(e.getX(), e.getY());
                     popup.setVisible(true);
                     popup.addWindowListener(new WindowAdapter() {
@@ -582,8 +581,8 @@ class ShenandoahVisualizer {
         public void repaintPopups() {
             if (popups != null) {
                 for (RegionPopUp popup : popups) {
-                    popup.setSnapshot(snapshot);
                     popup.setSnapshots(snapshots);
+                    popup.setSnapshot(snapshot);
                     popup.repaint();
                 }
             }
