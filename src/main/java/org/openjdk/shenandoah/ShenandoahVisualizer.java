@@ -582,7 +582,33 @@ class ShenandoahVisualizer {
             if (popups != null) {
                 for (RegionPopUp popup : popups) {
                     popup.setSnapshots(snapshots);
-                    popup.setSnapshot(snapshot);
+                    popup.repaint();
+                }
+            }
+        }
+        public void stepBackRepaintPopups(int n) {
+
+            if (popups != null) {
+                for (RegionPopUp popup : popups) {
+                    popup.setStepback(n);
+                    popup.repaint();
+                }
+            }
+        }
+        public void stepForwardRepaintPopups(int n) {
+
+            if (popups != null) {
+                for (RegionPopUp popup : popups) {
+                    popup.setStepForward(n);
+                    popup.repaint();
+                }
+            }
+        }
+        public void noAutomaticScroll(boolean noAutomaticScroll) {
+
+            if (popups != null) {
+                for (RegionPopUp popup : popups) {
+                    popup.setNoAutomaticScroll(noAutomaticScroll);
                     popup.repaint();
                 }
             }
@@ -782,13 +808,16 @@ class ShenandoahVisualizer {
 
         public synchronized void run() {
             if (!isPaused) {
+                noAutomaticScroll(false);
                 if (endSnapshotIndex < lastSnapshots.size()) {
                     int i = Math.max(endSnapshotIndex - 1, 0);
                     long time = lastSnapshots.get(i).time();
                     snapshot = data.getSnapshotAtTime(time);
                     if (data.snapshotTimeHasOccurred(snapshot)) {
+                        snapshots.add(snapshot);
                         endSnapshotIndex++;
                         frame.repaint();
+                        repaintPopups();
                     }
                 } else {
                     Snapshot cur = data.snapshot();
@@ -801,6 +830,7 @@ class ShenandoahVisualizer {
                             frontSnapshotIndex++;
                         }
                         frame.repaint();
+                        repaintPopups();
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
@@ -808,8 +838,9 @@ class ShenandoahVisualizer {
                     data.controlStopwatch("STOP");
                     isPaused = true;
                 }
+            } else {
+                repaintPopups();
             }
-            repaintPopups();
         }
 
         public synchronized void stepBackSnapshots(int n) {
@@ -824,7 +855,8 @@ class ShenandoahVisualizer {
 
             snapshot = data.getSnapshotAtTime(time);
             frame.repaint();
-            repaintPopups();
+            noAutomaticScroll(true);
+            stepBackRepaintPopups(n);
         }
 
         public synchronized void stepForwardSnapshots(int n) {
@@ -835,6 +867,14 @@ class ShenandoahVisualizer {
                     int index = Math.max(endSnapshotIndex - 1, 0);
                     long time = lastSnapshots.get(index).time();
                     snapshot = data.getSnapshotAtTime(time);
+                    int endIndex = snapshots.size();
+                    while (snapshots.size() < lastSnapshots.size()) {
+                        long t = lastSnapshots.get(endIndex).time();
+                        snapshots.add(data.getSnapshotAtTime(t));
+                        stepForwardRepaintPopups(1);
+                        endIndex++;
+                    }
+
                 } else {
                     // keep processing snapshots from logData until it reaches a diff snapshot from this.snapshot
                     Snapshot cur = data.getNextSnapshot();
@@ -846,6 +886,7 @@ class ShenandoahVisualizer {
                     snapshot = cur;
                     lastSnapshots.add(new SnapshotView(cur));
                     snapshots.add(cur);
+                    stepForwardRepaintPopups(1);
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;

@@ -223,8 +223,20 @@ public class RegionPopUp extends JFrame {
         g.drawString("Age: " + spotlightAge, 20, 210);
         g.drawString("Affiliation: " + spotlightAffiliation, 20, 230);
     }
-    public final void setSnapshot(Snapshot snapshot) {
-        this.snapshot = snapshot;
+    public final void setStepback(int n) {
+        startIndex -= n;
+        for (int i = 0; i < n; i++) {
+            if (snapshots.size() > 0) {
+                snapshots.remove(snapshots.size() - 1);
+            }
+        }
+    }
+    public final void setStepForward(int n) {
+        startIndex += n;
+    }
+    public final void setNoAutomaticScroll(boolean noAutomaticScroll) {
+        this.noAutomaticScroll = noAutomaticScroll;
+
     }
     public final void setSnapshots(LinkedList<Snapshot> snapshots) {
         this.snapshots = snapshots;
