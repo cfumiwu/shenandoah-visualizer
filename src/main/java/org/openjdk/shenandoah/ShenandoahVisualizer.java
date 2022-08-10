@@ -856,14 +856,8 @@ class ShenandoahVisualizer {
                     int index = Math.max(endSnapshotIndex - 1, 0);
                     long time = lastSnapshots.get(index).time();
                     snapshot = data.getSnapshotAtTime(time);
-                    int endIndex = snapshots.size();
-                    while (snapshots.size() < lastSnapshots.size()) {
-                        long t = lastSnapshots.get(endIndex).time();
-                        snapshots.add(data.getSnapshotAtTime(t));
-                        stepForwardRepaintPopups(1);
-                        endIndex++;
-                    }
-
+                    snapshots.add(snapshot);
+                    stepForwardRepaintPopups(1);
                 } else {
                     // keep processing snapshots from logData until it reaches a diff snapshot from this.snapshot
                     Snapshot cur = data.getNextSnapshot();
