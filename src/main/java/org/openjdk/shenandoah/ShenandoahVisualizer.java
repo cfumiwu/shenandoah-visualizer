@@ -290,7 +290,7 @@ class ShenandoahVisualizer {
                 int cols = regionWidth[0] / sqSize;
                 int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
-                    RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
+                    RegionPopUp popup = new RegionPopUp(regionNumber);
                     popup.setSize(450, 450);
                     popup.setLocation(e.getX(), e.getY());
                     popup.setVisible(true);
@@ -586,23 +586,6 @@ class ShenandoahVisualizer {
                 }
             }
         }
-        public void stepBackRepaintPopups(int n) {
-
-            if (popups != null) {
-                for (RegionPopUp popup : popups) {
-                    popup.setStepback(n);
-                    popup.repaint();
-                }
-            }
-        }
-        public void stepForwardRepaintPopups(int n) {
-            if (popups != null) {
-                for (RegionPopUp popup : popups) {
-                    popup.setStepForward(n);
-                    popup.repaint();
-                }
-            }
-        }
     }
 
     public static class RenderLive extends Render {
@@ -844,8 +827,15 @@ class ShenandoahVisualizer {
             data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(time));
 
             snapshot = data.getSnapshotAtTime(time);
+
+            for (int j = 0; j < n; j++) {
+                if (snapshots.size() > 0) {
+                    snapshots.remove(snapshots.size() - 1);
+                }
+            }
+
             frame.repaint();
-            stepBackRepaintPopups(n);
+            repaintPopups();
         }
 
         public synchronized void stepForwardSnapshots(int n) {
@@ -857,7 +847,6 @@ class ShenandoahVisualizer {
                     long time = lastSnapshots.get(index).time();
                     snapshot = data.getSnapshotAtTime(time);
                     snapshots.add(snapshot);
-                    stepForwardRepaintPopups(1);
                 } else {
                     // keep processing snapshots from logData until it reaches a diff snapshot from this.snapshot
                     Snapshot cur = data.getNextSnapshot();
@@ -869,7 +858,6 @@ class ShenandoahVisualizer {
                     snapshot = cur;
                     lastSnapshots.add(new SnapshotView(cur));
                     snapshots.add(cur);
-                    stepForwardRepaintPopups(1);
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
