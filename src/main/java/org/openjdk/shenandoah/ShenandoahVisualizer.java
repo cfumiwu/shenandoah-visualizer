@@ -596,19 +596,9 @@ class ShenandoahVisualizer {
             }
         }
         public void stepForwardRepaintPopups(int n) {
-
             if (popups != null) {
                 for (RegionPopUp popup : popups) {
                     popup.setStepForward(n);
-                    popup.repaint();
-                }
-            }
-        }
-        public void noAutomaticScroll(boolean noAutomaticScroll) {
-
-            if (popups != null) {
-                for (RegionPopUp popup : popups) {
-                    popup.setNoAutomaticScroll(noAutomaticScroll);
                     popup.repaint();
                 }
             }
@@ -808,7 +798,6 @@ class ShenandoahVisualizer {
 
         public synchronized void run() {
             if (!isPaused) {
-                noAutomaticScroll(false);
                 if (endSnapshotIndex < lastSnapshots.size()) {
                     int i = Math.max(endSnapshotIndex - 1, 0);
                     long time = lastSnapshots.get(i).time();
@@ -834,6 +823,7 @@ class ShenandoahVisualizer {
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
+                    snapshots.add(snapshot);
                     System.out.println("Should only enter here at end of snapshots.");
                     data.controlStopwatch("STOP");
                     isPaused = true;
@@ -855,7 +845,6 @@ class ShenandoahVisualizer {
 
             snapshot = data.getSnapshotAtTime(time);
             frame.repaint();
-            noAutomaticScroll(true);
             stepBackRepaintPopups(n);
         }
 
