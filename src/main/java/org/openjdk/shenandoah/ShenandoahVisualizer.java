@@ -116,10 +116,9 @@ class ShenandoahVisualizer {
         }
 
         // Executors
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(1);;
+        ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
         final ScheduledFuture<?>[] f = {service.scheduleAtFixedRate(renderRunner,
                 0, renderRunner.isLive ? 100 : 1, TimeUnit.MILLISECONDS)};
-        ;
 
 
         JPanel regionsPanel = new JPanel() {
@@ -198,7 +197,6 @@ class ShenandoahVisualizer {
             }
         };
         toolbarPanel.setPlayPauseButtonListener(playPauseButtonListener);
-
         // Step back/forward button listeners
         toolbarPanel.setBackButton_1_Listener((ae) -> renderRunner.playback.stepBackSnapshots(1));
 
@@ -207,6 +205,7 @@ class ShenandoahVisualizer {
         toolbarPanel.setForwardButton_1_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(1));
 
         toolbarPanel.setForwardButton_5_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(5));
+
 
         // Speed button listeners
         ChangeListener speedSpinnerListener = new ChangeListener() {
@@ -376,6 +375,30 @@ class ShenandoahVisualizer {
             frame.add(legendPanel, c);
         }
 
+        toolbarPanel.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    toolbarPanel.pressBackButton_5();
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    toolbarPanel.pressBackButton_1();
+                }
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    toolbarPanel.pressPlayPauseButton();
+                }
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    toolbarPanel.pressForwardButton_1();
+                }
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    toolbarPanel.pressForwardButton_5();
+                }
+            }
+        });
+        toolbarPanel.setFocusable(true);
+        toolbarPanel.requestFocusInWindow();
+
         frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -386,6 +409,7 @@ class ShenandoahVisualizer {
             }
         });
         f[0].get();
+
     }
 
     public abstract static class Render {

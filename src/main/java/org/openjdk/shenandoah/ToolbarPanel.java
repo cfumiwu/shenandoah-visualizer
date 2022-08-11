@@ -53,8 +53,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.security.Key;
 import java.text.ParseException;
 
 public class ToolbarPanel extends JPanel
@@ -98,11 +98,13 @@ public class ToolbarPanel extends JPanel
         realtimeModeButton = new JButton("Switch to Realtime");
         realtimeModeButton.setActionCommand(REALTIME);
         realtimeModeButton.addActionListener(this);
+        realtimeModeButton.setFocusable(false);
         fileToolbar.add(realtimeModeButton);
 
         fileButton = new JButton("Load file");
         fileButton.setActionCommand(CHOOSE_FILE);
         fileButton.addActionListener(this);
+        fileButton.setFocusable(false);
         fileToolbar.add(this.fileButton);
 
         fileNameField = new JTextField();
@@ -204,26 +206,31 @@ public class ToolbarPanel extends JPanel
         this.backButton_5 = new JButton("-5");
         backButton_5.setActionCommand(BACK_5);
         backButton_5.addActionListener(this);
+        backButton_5.setFocusable(false);
         replayToolbar.add(this.backButton_5);
 
         this.backButton_1 = new JButton("-1");
         backButton_1.setActionCommand(BACK_1);
         backButton_1.addActionListener(this);
+        backButton_1.setFocusable(false);
         replayToolbar.add(this.backButton_1);
 
         this.playPauseButton = new JButton("Play/Pause");
         playPauseButton.setActionCommand(PLAY_PAUSE);
         playPauseButton.addActionListener(this);
+        playPauseButton.setFocusable(false);
         replayToolbar.add(this.playPauseButton);
 
         this.forwardButton_1 = new JButton("+1");
         forwardButton_1.setActionCommand(FORWARD_1);
         forwardButton_1.addActionListener(this);
+        forwardButton_1.setFocusable(false);
         replayToolbar.add(this.forwardButton_1);
 
         this.forwardButton_5 = new JButton("+5");
         forwardButton_5.setActionCommand(FORWARD_5);
         forwardButton_5.addActionListener(this);
+        forwardButton_5.setFocusable(false);
         replayToolbar.add(this.forwardButton_5);
     }
 
@@ -313,7 +320,6 @@ public class ToolbarPanel extends JPanel
     public void setForwardButton_5_Listener(ActionListener a) {
         forwardButton_5.addActionListener(a);
     }
-
     // Speed Toolbar Listeners
     public void setSpeedSpinnerListener(ChangeListener c) {
         speedSpinner.addChangeListener(c);
@@ -365,5 +371,20 @@ public class ToolbarPanel extends JPanel
         } else if ( !(PLAY_PAUSE.equals(cmd) || SPEED_0_5.equals(cmd) || SPEED_2.equals(cmd) || SPEED_RESET.equals(cmd)) ){
             lastActionField.setText(cmd + " button pressed.");
         }
+    }
+    public void pressBackButton_5() {
+        backButton_5.doClick();
+    }
+    public void pressBackButton_1() {
+        backButton_1.doClick();
+    }
+    public void pressPlayPauseButton() {
+        playPauseButton.doClick();
+    }
+    public void pressForwardButton_1() {
+        forwardButton_1.doClick();
+    }
+    public void pressForwardButton_5() {
+        forwardButton_5.doClick();
     }
 }
