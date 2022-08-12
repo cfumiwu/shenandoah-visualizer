@@ -292,6 +292,7 @@ class ShenandoahVisualizer {
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
                     RegionPopUp popup = new RegionPopUp(snapshot, regionNumber);
                     popup.setSize(310, 310);
+                    popup.setAlwaysOnTop(true);
                     popup.setLocation(e.getX(), e.getY());
                     popup.setVisible(true);
                     popup.addWindowListener(new WindowAdapter() {
