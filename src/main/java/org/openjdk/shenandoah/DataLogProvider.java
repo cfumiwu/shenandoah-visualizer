@@ -206,5 +206,8 @@ public class DataLogProvider {
         }
         return currSnapshot;
     }
+    public int getSnapshotsSize() {
+        return snapshots.size();
+    }
 }
 

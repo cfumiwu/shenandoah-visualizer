@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2021, Amazon.com, Inc. All rights reserved.
  * Copyright (c) 2016, 2020, Red Hat, Inc. All rights reserved.
  *
@@ -101,9 +101,11 @@ class ShenandoahVisualizer {
 
         final RenderRunner renderRunner;
         ToolbarPanel toolbarPanel = new ToolbarPanel(isReplay);
+        SliderPanel sliderPanel = new SliderPanel(isReplay);
 
         if (isReplay) {
             DataLogProvider data = new DataLogProvider(filePath[0]);
+            sliderPanel.setSize(data.getSnapshotsSize());
             renderRunner = new RenderRunner(data, frame);
             toolbarPanel.setModeField(PLAYBACK);
             toolbarPanel.setEnabledRealtimeModeButton(true);
@@ -346,7 +348,7 @@ class ShenandoahVisualizer {
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 0;
-            c.gridy = 2;
+            c.gridy = 3;
             c.insets = pad;
             c.weightx = 3;
             frame.add(toolbarPanel, c);
@@ -374,6 +376,16 @@ class ShenandoahVisualizer {
             c.insets = pad;
             c.gridheight = GridBagConstraints.REMAINDER;
             frame.add(legendPanel, c);
+        }
+
+        {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 1;
+            c.gridy = 3;
+            c.insets = pad;
+            c.weightx = 1;
+            frame.add(sliderPanel, c);
         }
 
         frame.setVisible(true);
