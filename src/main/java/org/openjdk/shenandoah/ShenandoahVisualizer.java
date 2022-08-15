@@ -399,13 +399,13 @@ class ShenandoahVisualizer {
         final int STEP_X = 2;
 
         final LinkedList<SnapshotView> lastSnapshots;
-        final LinkedList<Snapshot> snapshots;
+        final LinkedList<Snapshot> popupSnapshots;
         volatile Snapshot snapshot;
 
         public Render(JFrame frame) {
             this.frame = frame;
             this.lastSnapshots = new LinkedList<>();
-            this.snapshots = new LinkedList<>();
+            this.popupSnapshots = new LinkedList<>();
         }
 
         protected static Color getColor(SnapshotView s) {
@@ -581,7 +581,7 @@ class ShenandoahVisualizer {
         public void repaintPopups() {
             if (popups != null) {
                 for (RegionPopUp popup : popups) {
-                    popup.setSnapshots(snapshots);
+                    popup.setSnapshots(popupSnapshots);
                     popup.repaint();
                 }
             }
@@ -608,7 +608,7 @@ class ShenandoahVisualizer {
             if (!cur.equals(snapshot)) {
                 snapshot = cur;
                 lastSnapshots.add(new SnapshotView(cur));
-                snapshots.add(cur);
+                popupSnapshots.add(cur);
                 if (lastSnapshots.size() > graphWidth / STEP_X) {
                     lastSnapshots.removeFirst();
                 }
@@ -621,7 +621,7 @@ class ShenandoahVisualizer {
             closeDataProvider();
             this.data = data;
             this.lastSnapshots.clear();
-            this.snapshots.clear();
+            this.popupSnapshots.clear();
             this.snapshot = data.snapshot();
         }
 
@@ -786,7 +786,7 @@ class ShenandoahVisualizer {
                     long time = lastSnapshots.get(i).time();
                     snapshot = data.getSnapshotAtTime(time);
                     if (data.snapshotTimeHasOccurred(snapshot)) {
-                        snapshots.add(snapshot);
+                        popupSnapshots.add(snapshot);
                         endSnapshotIndex++;
                         frame.repaint();
                         repaintPopups();
@@ -796,7 +796,7 @@ class ShenandoahVisualizer {
                     if (!cur.equals(snapshot)) {
                         snapshot = cur;
                         lastSnapshots.add(new SnapshotView(cur));
-                        snapshots.add(cur);
+                        popupSnapshots.add(cur);
                         endSnapshotIndex = lastSnapshots.size();
                         if (lastSnapshots.size() - frontSnapshotIndex > graphWidth / STEP_X) {
                             frontSnapshotIndex++;
@@ -806,7 +806,7 @@ class ShenandoahVisualizer {
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
-                    snapshots.add(snapshot);
+                    popupSnapshots.add(snapshot);
                     System.out.println("Should only enter here at end of snapshots.");
                     data.controlStopwatch("STOP");
                     isPaused = true;
@@ -829,8 +829,8 @@ class ShenandoahVisualizer {
             snapshot = data.getSnapshotAtTime(time);
 
             for (int j = 0; j < n; j++) {
-                if (snapshots.size() > 0) {
-                    snapshots.remove(snapshots.size() - 1);
+                if (popupSnapshots.size() > 0) {
+                    popupSnapshots.remove(popupSnapshots.size() - 1);
                 }
             }
 
@@ -846,7 +846,7 @@ class ShenandoahVisualizer {
                     int index = Math.max(endSnapshotIndex - 1, 0);
                     long time = lastSnapshots.get(index).time();
                     snapshot = data.getSnapshotAtTime(time);
-                    snapshots.add(snapshot);
+                    popupSnapshots.add(snapshot);
                 } else {
                     // keep processing snapshots from logData until it reaches a diff snapshot from this.snapshot
                     Snapshot cur = data.getNextSnapshot();
@@ -857,7 +857,7 @@ class ShenandoahVisualizer {
 
                     snapshot = cur;
                     lastSnapshots.add(new SnapshotView(cur));
-                    snapshots.add(cur);
+                    popupSnapshots.add(cur);
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
@@ -874,7 +874,7 @@ class ShenandoahVisualizer {
         private synchronized void loadLogDataProvider(DataLogProvider data) {
             this.data = data;
             this.lastSnapshots.clear();
-            this.snapshots.clear();
+            this.popupSnapshots.clear();
             this.snapshot = data.snapshot();
             this.isPaused = false;
             this.speed = 1.0;
