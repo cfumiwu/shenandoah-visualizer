@@ -805,6 +805,10 @@ class ShenandoahVisualizer {
                     data.controlStopwatch("STOP");
                     isPaused = true;
                 }
+            } else {
+                if (data.stopwatch.isStarted()) {
+                    data.controlStopwatch("STOP");
+                }
             }
         }
 
