@@ -288,11 +288,30 @@ class ShenandoahVisualizer {
                 int regionNumber = (e.getX() / sqSize) + ((e.getY() / sqSize) * cols) ;
                 if (regionNumber >= 0 && regionNumber < snapshot.statsSize()) {
                     RegionPopUp popup = new RegionPopUp(regionNumber);
-                    popup.setSize(310, 310);
-                    popup.setAlwaysOnTop(true);
                     popup.setSize(450, 450);
                     popup.setLocation(e.getX(), e.getY());
                     popup.setVisible(true);
+                    popup.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+                            super.keyPressed(e);
+                            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                                toolbarPanel.pressBackButton_1();
+                            }
+                            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                                toolbarPanel.pressBackButton_5();
+                            }
+                            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                                toolbarPanel.pressPlayPauseButton();
+                            }
+                            if (e.getKeyCode() == KeyEvent.VK_UP) {
+                                toolbarPanel.pressForwardButton_5();
+                            }
+                            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                                toolbarPanel.pressForwardButton_1();
+                            }
+                        }
+                    });
                     popup.addWindowListener(new WindowAdapter() {
                         @Override
                         public void windowClosing(WindowEvent e) {
@@ -379,19 +398,19 @@ class ShenandoahVisualizer {
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    toolbarPanel.pressBackButton_5();
+                    toolbarPanel.pressBackButton_1();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    toolbarPanel.pressBackButton_1();
+                    toolbarPanel.pressBackButton_5();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     toolbarPanel.pressPlayPauseButton();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    toolbarPanel.pressForwardButton_1();
+                    toolbarPanel.pressForwardButton_5();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    toolbarPanel.pressForwardButton_5();
+                    toolbarPanel.pressForwardButton_1();
                 }
             }
         });
