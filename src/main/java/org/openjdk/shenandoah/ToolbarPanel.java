@@ -430,7 +430,9 @@ public class ToolbarPanel extends JPanel
         slider.setValue(value);
     }
     public int currentSliderValue() {
-        timestampField.setText(Long.toString(snapshots.get(slider.getValue() - 1).time()) + " ms");
+        if ((slider.getValue() - 1) >= 0) {
+            timestampField.setText(Long.toString(snapshots.get(slider.getValue() - 1).time()) + " ms");
+        }
         return slider.getValue();
     }
  }
