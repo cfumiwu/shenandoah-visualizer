@@ -84,6 +84,7 @@ public class ToolbarPanel extends JPanel
     JSpinner.NumberEditor speedEditor;
     private JTextField fileNameField, lastActionField, modeField;
     private JLabel modeLabel, lastActionLabel, speedLabel;
+    private JSlider slider = new JSlider();
 
     public boolean speedButtonPressed = false;
 
@@ -105,6 +106,10 @@ public class ToolbarPanel extends JPanel
         fileButton.addActionListener(this);
         fileToolbar.add(this.fileButton);
 
+        slider.setMinimum(0);
+        slider.setOrientation(SwingConstants.HORIZONTAL);
+        slider.setValue(0);
+
         fileNameField = new JTextField();
         fileNameField.setEditable(false);
         fileToolbar.add(fileNameField);
@@ -113,7 +118,7 @@ public class ToolbarPanel extends JPanel
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 0;
-            c.gridy = 0;
+            c.gridy = 1;
             c.weightx = 2;
             c.weighty = 1;
             add(fileToolbar, c);
@@ -152,8 +157,18 @@ public class ToolbarPanel extends JPanel
         {
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
-            c.gridx = 1;
+            c.gridx = 0;
             c.gridy = 0;
+            c.weightx = 3;
+            c.weighty = 1;
+            add(slider, c);
+        }
+
+        {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 1;
+            c.gridy = 1;
             c.weightx = 2;
             c.weighty = 1;
             add(replayToolbar, c);
@@ -163,7 +178,7 @@ public class ToolbarPanel extends JPanel
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 0;
-            c.gridy = 1;
+            c.gridy = 2;
             c.weightx = 2;
             c.weighty = 1;
             add(statusToolbar, c);
@@ -173,7 +188,7 @@ public class ToolbarPanel extends JPanel
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 1;
-            c.gridy = 1;
+            c.gridy = 2;
             c.weightx = 2;
             c.weighty = 1;
             add(speedToolbar, c);
@@ -366,4 +381,10 @@ public class ToolbarPanel extends JPanel
             lastActionField.setText(cmd + " button pressed.");
         }
     }
-}
+    public final void setSize(int size) {
+        slider.setMaximum(size);
+    }
+    public final void setValue(int value) {
+        slider.setValue(value);
+    }
+ }

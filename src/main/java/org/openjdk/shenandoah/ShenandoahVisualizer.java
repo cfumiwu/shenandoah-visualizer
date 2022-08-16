@@ -48,6 +48,8 @@ class ShenandoahVisualizer {
     private static final String PLAYBACK = "Playback";
     private static final String REALTIME = "Realtime";
 
+    static int value = 0;
+
     private static ScheduledFuture<?> changeScheduleInterval(int n, ScheduledExecutorService service, ScheduledFuture<?> f, Runnable task) {
         if (service == null || f == null) return null;
         if (n > 0) {
@@ -101,12 +103,11 @@ class ShenandoahVisualizer {
 
         final RenderRunner renderRunner;
         ToolbarPanel toolbarPanel = new ToolbarPanel(isReplay);
-        SliderPanel sliderPanel = new SliderPanel(isReplay);
 
         if (isReplay) {
             DataLogProvider data = new DataLogProvider(filePath[0]);
-            sliderPanel.setSize(data.getSnapshotsSize());
-            renderRunner = new RenderRunner(data, frame);
+            toolbarPanel.setSize(data.getSnapshotsSize());
+            renderRunner = new RenderRunner(data, frame, toolbarPanel);
             toolbarPanel.setModeField(PLAYBACK);
             toolbarPanel.setEnabledRealtimeModeButton(true);
             toolbarPanel.setFileNameField(filePath[0]);
@@ -345,7 +346,7 @@ class ShenandoahVisualizer {
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.BOTH;
             c.gridx = 0;
-            c.gridy = 3;
+            c.gridy = 2;
             c.insets = pad;
             c.weightx = 3;
             frame.add(toolbarPanel, c);
@@ -358,7 +359,7 @@ class ShenandoahVisualizer {
             c.gridx = 1;
             c.gridy = 0;
             c.weightx = 1;
-            c.weighty = 2;
+            c.weighty = 3.5;
             c.insets = pad;
             frame.add(statusPanel, c);
         }
@@ -373,16 +374,6 @@ class ShenandoahVisualizer {
             c.insets = pad;
             c.gridheight = GridBagConstraints.REMAINDER;
             frame.add(legendPanel, c);
-        }
-
-        {
-            GridBagConstraints c = new GridBagConstraints();
-            c.fill = GridBagConstraints.BOTH;
-            c.gridx = 1;
-            c.gridy = 3;
-            c.insets = pad;
-            c.weightx = 1;
-            frame.add(sliderPanel, c);
         }
 
         frame.setVisible(true);
@@ -776,14 +767,17 @@ class ShenandoahVisualizer {
         volatile int frontSnapshotIndex = 0;
         volatile int endSnapshotIndex = 0;
 
+        ToolbarPanel toolbarPanel;
+
         public RenderPlayback(JFrame frame) {
             super(frame);
             this.snapshot = null;
             this.isPaused = true;
         }
 
-        public RenderPlayback(DataLogProvider data, JFrame frame) {
+        public RenderPlayback(DataLogProvider data, JFrame frame, ToolbarPanel toolbarPanel) {
             super(frame);
+            this.toolbarPanel = toolbarPanel;
             this.data = data;
             this.snapshot = data.snapshot();
             this.isPaused = false;
@@ -800,6 +794,7 @@ class ShenandoahVisualizer {
                     snapshot = data.getSnapshotAtTime(time);
                     if (data.snapshotTimeHasOccurred(snapshot)) {
                         popupSnapshots.add(snapshot);
+                        toolbarPanel.setValue(popupSnapshots.size());
                         endSnapshotIndex++;
                         frame.repaint();
                         repaintPopups();
@@ -814,12 +809,14 @@ class ShenandoahVisualizer {
                         if (lastSnapshots.size() - frontSnapshotIndex > graphWidth / STEP_X) {
                             frontSnapshotIndex++;
                         }
+                        toolbarPanel.setValue(popupSnapshots.size());
                         frame.repaint();
                         repaintPopups();
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
                     popupSnapshots.add(snapshot);
+                    toolbarPanel.setValue(popupSnapshots.size());
                     System.out.println("Should only enter here at end of snapshots.");
                     data.controlStopwatch("STOP");
                     isPaused = true;
@@ -849,6 +846,7 @@ class ShenandoahVisualizer {
                     popupSnapshots.remove(popupSnapshots.size() - 1);
                 }
             }
+            toolbarPanel.setValue(popupSnapshots.size());
 
             frame.repaint();
             repaintPopups();
@@ -863,6 +861,7 @@ class ShenandoahVisualizer {
                     long time = lastSnapshots.get(index).time();
                     snapshot = data.getSnapshotAtTime(time);
                     popupSnapshots.add(snapshot);
+                    toolbarPanel.setValue(popupSnapshots.size());
                 } else {
                     // keep processing snapshots from logData until it reaches a diff snapshot from this.snapshot
                     Snapshot cur = data.getNextSnapshot();
@@ -874,6 +873,7 @@ class ShenandoahVisualizer {
                     snapshot = cur;
                     lastSnapshots.add(new SnapshotView(cur));
                     popupSnapshots.add(cur);
+                    toolbarPanel.setValue(popupSnapshots.size());
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
@@ -1028,11 +1028,11 @@ class ShenandoahVisualizer {
             isLive = true;
         }
 
-        public RenderRunner(DataLogProvider data, JFrame frame) {
+        public RenderRunner(DataLogProvider data, JFrame frame, ToolbarPanel toolbarPanel) {
             this.frame = frame;
             live = new RenderLive(frame);
             live.closeDataProvider();
-            playback = new RenderPlayback(data, frame);
+            playback = new RenderPlayback(data, frame, toolbarPanel);
             isLive = false;
         }
 
