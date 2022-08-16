@@ -109,6 +109,7 @@ class ShenandoahVisualizer {
             DataLogProvider data = new DataLogProvider(filePath[0]);
             totalSnapshotSize = data.getSnapshotsSize();
             toolbarPanel.setSize(totalSnapshotSize);
+            toolbarPanel.setSnapshots(data.getSnapshots());
             renderRunner = new RenderRunner(data, frame, toolbarPanel);
             toolbarPanel.setModeField(PLAYBACK);
             toolbarPanel.setEnabledRealtimeModeButton(true);
@@ -190,12 +191,12 @@ class ShenandoahVisualizer {
                     f[0] = changeScheduleInterval(1, service, f[0], renderRunner);
                 }
 
-                int finalTotalSnapshotSize = totalSnapshotSize - 1;
+                int lastSnapshotIndex = totalSnapshotSize - 1;
                 toolbarPanel.setEndSnapshotButtonListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (finalTotalSnapshotSize > 0) {
-                            renderRunner.playback.stepForwardSnapshots(finalTotalSnapshotSize);
+                        if (lastSnapshotIndex > 0) {
+                            renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);
                         }
 
                     }
@@ -225,13 +226,13 @@ class ShenandoahVisualizer {
 
         toolbarPanel.setForwardButton_5_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(5));
 
-        int finalTotalSnapshotSize = totalSnapshotSize - 1;
+        int lastSnapshotIndex = totalSnapshotSize - 1;
 
         toolbarPanel.setEndSnapshotButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (finalTotalSnapshotSize > 0) {
-                    renderRunner.playback.stepForwardSnapshots(finalTotalSnapshotSize);
+                if (lastSnapshotIndex > 0) {
+                    renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);
                 }
 
             }
@@ -240,7 +241,7 @@ class ShenandoahVisualizer {
         ChangeListener sliderListener = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                int difference =toolbarPanel.currentSliderValue() - renderRunner.playback.getPopupSnapshotsSize();
+                int difference = toolbarPanel.currentSliderValue() - renderRunner.playback.getPopupSnapshotsSize();
                 if (difference > 0) {
                     renderRunner.playback.stepForwardSnapshots(difference);
                 }
@@ -833,7 +834,7 @@ class ShenandoahVisualizer {
                     data.controlStopwatch("START");
                 }
                 if (endSnapshotIndex < lastSnapshots.size()) {
-                    int i = Math.max(endSnapshotIndex - 1, 0);
+                    int i = Math.max(endSnapshotIndex, 0);
                     long time = lastSnapshots.get(i).time();
                     snapshot = data.getSnapshotAtTime(time);
                     if (data.snapshotTimeHasOccurred(snapshot)) {
@@ -859,7 +860,6 @@ class ShenandoahVisualizer {
                     }
                 }
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
-                    popupSnapshots.add(snapshot);
                     toolbarPanel.setValue(popupSnapshots.size());
                     System.out.println("Should only enter here at end of snapshots.");
                     data.controlStopwatch("STOP");
@@ -901,7 +901,7 @@ class ShenandoahVisualizer {
 
             for (int i = 0; i < n; i++) {
                 if (endSnapshotIndex < lastSnapshots.size()) {
-                    int index = Math.max(endSnapshotIndex - 1, 0);
+                    int index = Math.max(endSnapshotIndex, 0);
                     long time = lastSnapshots.get(index).time();
                     snapshot = data.getSnapshotAtTime(time);
                     popupSnapshots.add(snapshot);

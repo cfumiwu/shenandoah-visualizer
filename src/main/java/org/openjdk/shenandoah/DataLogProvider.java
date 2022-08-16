@@ -209,5 +209,8 @@ public class DataLogProvider {
     public int getSnapshotsSize() {
         return snapshots.size();
     }
+    public List<Snapshot> getSnapshots() {
+        return snapshots;
+    }
 }
 

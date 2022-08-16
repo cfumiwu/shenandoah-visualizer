@@ -55,7 +55,9 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.List;
 
 public class ToolbarPanel extends JPanel
                           implements ActionListener {
@@ -67,7 +69,7 @@ public class ToolbarPanel extends JPanel
     private static final String PLAY_PAUSE = "play/pause";
     private static final String FORWARD_1 = "Step forward 1";
     private static final String FORWARD_5 = "Step forward 5";
-    private static final String END_SNAPSHOT = "The end of the snapshot";
+    private static final String END_SNAPSHOT = "End snapshot";
 
     private static final String PLAYBACK = "Playback";
     private static final String REALTIME = "Realtime";
@@ -78,16 +80,18 @@ public class ToolbarPanel extends JPanel
     private static final String SPEED_RESET = "Reset speed to 1";
 
 
-    private JToolBar fileToolbar, replayToolbar, statusToolbar, speedToolbar;
+    private JToolBar fileToolbar, replayToolbar, statusToolbar, speedToolbar, timestampToolBar;
     private JButton fileButton, backButton_1, backButton_5, playPauseButton, forwardButton_1, forwardButton_5, realtimeModeButton, endSnapshotButton;
     private JButton speedMultiplierButton_0_5, speedMultiplierButton_2, resetSpeedMultiplierButton;
     private JSpinner speedSpinner;
     JSpinner.NumberEditor speedEditor;
-    private JTextField fileNameField, lastActionField, modeField;
-    private JLabel modeLabel, lastActionLabel, speedLabel;
+    private JTextField fileNameField, lastActionField, modeField, timestampField;
+    private JLabel modeLabel, lastActionLabel, speedLabel, timestampLabel;
     private JSlider slider = new JSlider();
 
     public boolean speedButtonPressed = false;
+
+    private List<Snapshot> snapshots;
 
 
     public ToolbarPanel(boolean isReplay) {
@@ -110,6 +114,7 @@ public class ToolbarPanel extends JPanel
         slider.setMinimum(0);
         slider.setOrientation(SwingConstants.HORIZONTAL);
         slider.setValue(0);
+        slider.setFocusable(false);
 
         fileNameField = new JTextField();
         fileNameField.setEditable(false);
@@ -134,6 +139,9 @@ public class ToolbarPanel extends JPanel
         speedToolbar = new JToolBar();
         speedToolbar.setFloatable(false);
 
+        timestampToolBar = new JToolBar();
+        timestampToolBar.setFloatable(false);
+
         lastActionLabel = new JLabel("Last action:");
         statusToolbar.add(lastActionLabel);
 
@@ -147,6 +155,13 @@ public class ToolbarPanel extends JPanel
         modeField = new JTextField();
         modeField.setEditable(false);
         statusToolbar.add(modeField);
+
+        timestampLabel = new JLabel("Timestamp: ");
+        timestampToolBar.add(timestampLabel);
+
+        timestampField = new JTextField();
+        timestampField.setEditable(false);
+        timestampToolBar.add(timestampField);
 
         addPlaybackButtons();
         addSpeedButtons();
@@ -163,6 +178,16 @@ public class ToolbarPanel extends JPanel
             c.weightx = 3;
             c.weighty = 1;
             add(slider, c);
+        }
+
+        {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 1;
+            c.gridy = 0;
+            c.weightx = 1;
+            c.weighty = 1;
+            add(timestampToolBar, c);
         }
 
         {
@@ -395,6 +420,9 @@ public class ToolbarPanel extends JPanel
             lastActionField.setText(cmd + " button pressed.");
         }
     }
+    public final void setSnapshots(List<Snapshot> snapshots) {
+        this.snapshots = snapshots;
+    }
     public final void setSize(int size) {
         slider.setMaximum(size);
     }
@@ -402,6 +430,7 @@ public class ToolbarPanel extends JPanel
         slider.setValue(value);
     }
     public int currentSliderValue() {
+        timestampField.setText(Long.toString(snapshots.get(slider.getValue() - 1).time()) + " ms");
         return slider.getValue();
     }
  }
