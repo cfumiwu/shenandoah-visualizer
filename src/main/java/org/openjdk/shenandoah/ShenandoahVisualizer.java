@@ -115,7 +115,7 @@ class ShenandoahVisualizer {
             toolbarPanel.setFileNameField(filePath[0]);
         } else {
             DataProvider data = new DataProvider(vmIdentifier);
-            renderRunner = new RenderRunner(data, frame);
+            renderRunner = new RenderRunner(data, frame, toolbarPanel);
             toolbarPanel.setModeField(REALTIME);
             toolbarPanel.setEnabledRealtimeModeButton(false);
         }
@@ -168,11 +168,14 @@ class ShenandoahVisualizer {
             public void actionPerformed(ActionEvent ae) {
                 JFileChooser fc = new JFileChooser();
                 int returnValue = fc.showOpenDialog(null);
+                int totalSnapshotSize = 0;
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     filePath[0] = fc.getSelectedFile().getAbsolutePath();
                     try {
                         DataLogProvider data = new DataLogProvider(filePath[0]);
                         renderRunner.loadPlayback(data);
+                        totalSnapshotSize = data.getSnapshotsSize();
+                        toolbarPanel.setSize(totalSnapshotSize);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -186,6 +189,17 @@ class ShenandoahVisualizer {
 
                     f[0] = changeScheduleInterval(1, service, f[0], renderRunner);
                 }
+
+                int finalTotalSnapshotSize = totalSnapshotSize - 1;
+                toolbarPanel.setEndSnapshotButtonListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (finalTotalSnapshotSize > 0) {
+                            renderRunner.playback.stepForwardSnapshots(finalTotalSnapshotSize);
+                        }
+
+                    }
+                });
             }
         };
         toolbarPanel.setFileButtonListener(fileButtonListener);
@@ -798,8 +812,9 @@ class ShenandoahVisualizer {
 
         ToolbarPanel toolbarPanel;
 
-        public RenderPlayback(JFrame frame) {
+        public RenderPlayback(JFrame frame, ToolbarPanel toolbarPanel) {
             super(frame);
+            this.toolbarPanel = toolbarPanel;
             this.snapshot = null;
             this.isPaused = true;
         }
@@ -1054,10 +1069,10 @@ class ShenandoahVisualizer {
         final JFrame frame;
         private boolean isLive;
 
-        public RenderRunner(DataProvider data, JFrame frame) {
+        public RenderRunner(DataProvider data, JFrame frame, ToolbarPanel toolbarPanel) {
             this.frame = frame;
             live = new RenderLive(data, frame);
-            playback = new RenderPlayback(frame);
+            playback = new RenderPlayback(frame, toolbarPanel);
             isLive = true;
         }
 
