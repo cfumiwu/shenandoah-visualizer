@@ -67,6 +67,7 @@ public class ToolbarPanel extends JPanel
     private static final String PLAY_PAUSE = "play/pause";
     private static final String FORWARD_1 = "Step forward 1";
     private static final String FORWARD_5 = "Step forward 5";
+    private static final String END_SNAPSHOT = "The end of the snapshot";
 
     private static final String PLAYBACK = "Playback";
     private static final String REALTIME = "Realtime";
@@ -78,7 +79,7 @@ public class ToolbarPanel extends JPanel
 
 
     private JToolBar fileToolbar, replayToolbar, statusToolbar, speedToolbar;
-    private JButton fileButton, backButton_1, backButton_5, playPauseButton, forwardButton_1, forwardButton_5, realtimeModeButton;
+    private JButton fileButton, backButton_1, backButton_5, playPauseButton, forwardButton_1, forwardButton_5, realtimeModeButton, endSnapshotButton;
     private JButton speedMultiplierButton_0_5, speedMultiplierButton_2, resetSpeedMultiplierButton;
     private JSpinner speedSpinner;
     JSpinner.NumberEditor speedEditor;
@@ -206,6 +207,7 @@ public class ToolbarPanel extends JPanel
         playPauseButton.setEnabled(b);
         forwardButton_1.setEnabled(b);
         forwardButton_5.setEnabled(b);
+        endSnapshotButton.setEnabled(b);
     }
 
     private void setEnableSpeedButtons(boolean b) {
@@ -240,6 +242,12 @@ public class ToolbarPanel extends JPanel
         forwardButton_5.setActionCommand(FORWARD_5);
         forwardButton_5.addActionListener(this);
         replayToolbar.add(this.forwardButton_5);
+
+        this.endSnapshotButton = new JButton("End Snapshot");
+        endSnapshotButton.setActionCommand(END_SNAPSHOT);
+        endSnapshotButton.setFocusable(false);
+        endSnapshotButton.addActionListener(this);
+        replayToolbar.add(this.endSnapshotButton);
     }
 
     private void addSpeedButtons() {
@@ -328,6 +336,12 @@ public class ToolbarPanel extends JPanel
     public void setForwardButton_5_Listener(ActionListener a) {
         forwardButton_5.addActionListener(a);
     }
+    public void setEndSnapshotButtonListener(ActionListener a) {
+        endSnapshotButton.addActionListener(a);
+    }
+    public void setSliderListener(ChangeListener c) {
+        slider.addChangeListener(c);
+    }
 
     // Speed Toolbar Listeners
     public void setSpeedSpinnerListener(ChangeListener c) {
@@ -386,5 +400,8 @@ public class ToolbarPanel extends JPanel
     }
     public final void setValue(int value) {
         slider.setValue(value);
+    }
+    public int currentSliderValue() {
+        return slider.getValue();
     }
  }

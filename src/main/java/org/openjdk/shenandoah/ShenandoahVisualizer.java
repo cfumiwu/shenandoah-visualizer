@@ -103,10 +103,12 @@ class ShenandoahVisualizer {
 
         final RenderRunner renderRunner;
         ToolbarPanel toolbarPanel = new ToolbarPanel(isReplay);
+        int totalSnapshotSize = 0;
 
         if (isReplay) {
             DataLogProvider data = new DataLogProvider(filePath[0]);
-            toolbarPanel.setSize(data.getSnapshotsSize());
+            totalSnapshotSize = data.getSnapshotsSize();
+            toolbarPanel.setSize(totalSnapshotSize);
             renderRunner = new RenderRunner(data, frame, toolbarPanel);
             toolbarPanel.setModeField(PLAYBACK);
             toolbarPanel.setEnabledRealtimeModeButton(true);
@@ -208,6 +210,33 @@ class ShenandoahVisualizer {
         toolbarPanel.setForwardButton_1_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(1));
 
         toolbarPanel.setForwardButton_5_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(5));
+
+        int finalTotalSnapshotSize = totalSnapshotSize - 1;
+
+        toolbarPanel.setEndSnapshotButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (finalTotalSnapshotSize > 0) {
+                    renderRunner.playback.stepForwardSnapshots(finalTotalSnapshotSize);
+                }
+
+            }
+        });
+
+        ChangeListener sliderListener = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int difference =toolbarPanel.currentSliderValue() - renderRunner.playback.getPopupSnapshotsSize();
+                if (difference > 0) {
+                    renderRunner.playback.stepForwardSnapshots(difference);
+                }
+                if (difference < 0) {
+                    renderRunner.playback.stepBackSnapshots(Math.abs(difference));
+                }
+
+            }
+        };
+        toolbarPanel.setSliderListener(sliderListener);
 
         // Speed button listeners
         ChangeListener speedSpinnerListener = new ChangeListener() {
@@ -1010,6 +1039,10 @@ class ShenandoahVisualizer {
 
             renderTimeLineLegendItem(g, LINE, Colors.DEGENERATE, ++line, "Degenerated Young");
             renderTimeLineLegendItem(g, LINE, Colors.FULL, ++line, "Full");
+        }
+
+        public int getPopupSnapshotsSize() {
+            return popupSnapshots.size();
         }
 
     }
