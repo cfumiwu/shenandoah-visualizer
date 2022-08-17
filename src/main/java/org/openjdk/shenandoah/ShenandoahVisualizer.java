@@ -194,6 +194,32 @@ class ShenandoahVisualizer {
                 renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
             }
         };
+        KeyAdapter keyShortcutAdapter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    renderRunner.playback.stepBackSnapshots(1);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    renderRunner.playback.stepBackSnapshots(5);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    if (renderRunner.playback.isPaused) {
+                        toolbarPanel.setLastActionField("Play button pressed.");
+                    } else {
+                        toolbarPanel.setLastActionField("Pause button pressed.");
+                    }
+                    renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    renderRunner.playback.stepForwardSnapshots(5);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    renderRunner.playback.stepForwardSnapshots(1);
+                }
+            }
+        };
         toolbarPanel.setPlayPauseButtonListener(playPauseButtonListener);
         // Step back/forward button listeners
         toolbarPanel.setBackButton_1_Listener((ae) -> renderRunner.playback.stepBackSnapshots(1));
@@ -291,32 +317,7 @@ class ShenandoahVisualizer {
                     popup.setSize(450, 450);
                     popup.setLocation(e.getX(), e.getY());
                     popup.setVisible(true);
-                    popup.addKeyListener(new KeyAdapter() {
-                        @Override
-                        public void keyPressed(KeyEvent e) {
-                            super.keyPressed(e);
-                            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                                renderRunner.playback.stepBackSnapshots(1);
-                            }
-                            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                                renderRunner.playback.stepBackSnapshots(5);
-                            }
-                            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                                if (renderRunner.playback.isPaused) {
-                                    toolbarPanel.setLastActionField("Play button pressed.");
-                                } else {
-                                    toolbarPanel.setLastActionField("Pause button pressed.");
-                                }
-                                renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
-                            }
-                            if (e.getKeyCode() == KeyEvent.VK_UP) {
-                                renderRunner.playback.stepForwardSnapshots(5);
-                            }
-                            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                                renderRunner.playback.stepForwardSnapshots(1);
-                            }
-                        }
-                    });
+                    popup.addKeyListener(keyShortcutAdapter);
                     popup.addWindowListener(new WindowAdapter() {
                         @Override
                         public void windowClosing(WindowEvent e) {
@@ -398,32 +399,7 @@ class ShenandoahVisualizer {
             frame.add(legendPanel, c);
         }
 
-        toolbarPanel.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    renderRunner.playback.stepBackSnapshots(1);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    renderRunner.playback.stepBackSnapshots(5);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    if (renderRunner.playback.isPaused) {
-                        toolbarPanel.setLastActionField("Play button pressed.");
-                    } else {
-                        toolbarPanel.setLastActionField("Pause button pressed.");
-                    }
-                    renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
-                }
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    renderRunner.playback.stepForwardSnapshots(5);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    renderRunner.playback.stepForwardSnapshots(1);
-                }
-            }
-        });
+        toolbarPanel.addKeyListener(keyShortcutAdapter);
         toolbarPanel.setFocusable(true);
         toolbarPanel.requestFocusInWindow();
 
