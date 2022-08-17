@@ -192,15 +192,7 @@ class ShenandoahVisualizer {
                 }
 
                 int lastSnapshotIndex = totalSnapshotSize - 1;
-                toolbarPanel.setEndSnapshotButtonListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (lastSnapshotIndex > 0) {
-                            renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);
-                        }
-
-                    }
-                });
+                toolbarPanel.setEndSnapshotButtonListener((e) -> {if (lastSnapshotIndex > 0) renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);});
             }
         };
         toolbarPanel.setFileButtonListener(fileButtonListener);
@@ -228,15 +220,7 @@ class ShenandoahVisualizer {
 
         int lastSnapshotIndex = totalSnapshotSize - 1;
 
-        toolbarPanel.setEndSnapshotButtonListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (lastSnapshotIndex > 0) {
-                    renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);
-                }
-
-            }
-        });
+        toolbarPanel.setEndSnapshotButtonListener(e -> {if (lastSnapshotIndex > 0) renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);});
 
         ChangeListener sliderListener = new ChangeListener() {
             @Override

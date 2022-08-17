@@ -233,6 +233,7 @@ public class ToolbarPanel extends JPanel
         forwardButton_1.setEnabled(b);
         forwardButton_5.setEnabled(b);
         endSnapshotButton.setEnabled(b);
+        slider.setEnabled(b);
     }
 
     private void setEnableSpeedButtons(boolean b) {
