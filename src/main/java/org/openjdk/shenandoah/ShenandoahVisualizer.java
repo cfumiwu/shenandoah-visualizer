@@ -207,6 +207,8 @@ class ShenandoahVisualizer {
                 renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
             }
         };
+
+        int lastSnapshotIndex = totalSnapshotSize - 1;
         KeyAdapter keyShortcutAdapter = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -231,6 +233,9 @@ class ShenandoahVisualizer {
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     renderRunner.playback.stepForwardSnapshots(1);
                 }
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && lastSnapshotIndex > 0) {
+                    renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);
+                }
             }
         };
         toolbarPanel.setPlayPauseButtonListener(playPauseButtonListener);
@@ -242,8 +247,6 @@ class ShenandoahVisualizer {
         toolbarPanel.setForwardButton_1_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(1));
 
         toolbarPanel.setForwardButton_5_Listener((ae) -> renderRunner.playback.stepForwardSnapshots(5));
-
-        int lastSnapshotIndex = totalSnapshotSize - 1;
 
         toolbarPanel.setEndSnapshotButtonListener(e -> {if (lastSnapshotIndex > 0) renderRunner.playback.stepForwardSnapshots(lastSnapshotIndex);});
 
