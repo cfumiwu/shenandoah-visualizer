@@ -177,6 +177,7 @@ class ShenandoahVisualizer {
                         renderRunner.loadPlayback(data);
                         totalSnapshotSize = data.getSnapshotsSize();
                         toolbarPanel.setSize(totalSnapshotSize);
+                        toolbarPanel.setSnapshots(data.getSnapshots());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
