@@ -302,7 +302,12 @@ class ShenandoahVisualizer {
                                 renderRunner.playback.stepBackSnapshots(5);
                             }
                             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                                toolbarPanel.pressPlayPauseButton();
+                                if (renderRunner.playback.isPaused) {
+                                    toolbarPanel.setLastActionField("Play button pressed.");
+                                } else {
+                                    toolbarPanel.setLastActionField("Pause button pressed.");
+                                }
+                                renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
                             }
                             if (e.getKeyCode() == KeyEvent.VK_UP) {
                                 renderRunner.playback.stepForwardSnapshots(5);
@@ -404,7 +409,12 @@ class ShenandoahVisualizer {
                     renderRunner.playback.stepBackSnapshots(5);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    toolbarPanel.pressPlayPauseButton();
+                    if (renderRunner.playback.isPaused) {
+                        toolbarPanel.setLastActionField("Play button pressed.");
+                    } else {
+                        toolbarPanel.setLastActionField("Pause button pressed.");
+                    }
+                    renderRunner.playback.isPaused = !renderRunner.playback.isPaused;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     renderRunner.playback.stepForwardSnapshots(5);

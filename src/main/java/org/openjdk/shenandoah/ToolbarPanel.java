@@ -372,7 +372,4 @@ public class ToolbarPanel extends JPanel
             lastActionField.setText(cmd + " button pressed.");
         }
     }
-    public void pressPlayPauseButton() {
-        playPauseButton.doClick();
-    }
 }
