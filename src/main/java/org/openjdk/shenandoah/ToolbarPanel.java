@@ -372,19 +372,7 @@ public class ToolbarPanel extends JPanel
             lastActionField.setText(cmd + " button pressed.");
         }
     }
-    public void pressBackButton_5() {
-        backButton_5.doClick();
-    }
-    public void pressBackButton_1() {
-        backButton_1.doClick();
-    }
     public void pressPlayPauseButton() {
         playPauseButton.doClick();
-    }
-    public void pressForwardButton_1() {
-        forwardButton_1.doClick();
-    }
-    public void pressForwardButton_5() {
-        forwardButton_5.doClick();
     }
 }

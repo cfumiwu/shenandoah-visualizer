@@ -296,19 +296,19 @@ class ShenandoahVisualizer {
                         public void keyPressed(KeyEvent e) {
                             super.keyPressed(e);
                             if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                                toolbarPanel.pressBackButton_1();
+                                renderRunner.playback.stepBackSnapshots(1);
                             }
                             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                                toolbarPanel.pressBackButton_5();
+                                renderRunner.playback.stepBackSnapshots(5);
                             }
                             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                                 toolbarPanel.pressPlayPauseButton();
                             }
                             if (e.getKeyCode() == KeyEvent.VK_UP) {
-                                toolbarPanel.pressForwardButton_5();
+                                renderRunner.playback.stepForwardSnapshots(5);
                             }
                             if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                                toolbarPanel.pressForwardButton_1();
+                                renderRunner.playback.stepForwardSnapshots(1);
                             }
                         }
                     });
@@ -398,19 +398,19 @@ class ShenandoahVisualizer {
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    toolbarPanel.pressBackButton_1();
+                    renderRunner.playback.stepBackSnapshots(1);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    toolbarPanel.pressBackButton_5();
+                    renderRunner.playback.stepBackSnapshots(5);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     toolbarPanel.pressPlayPauseButton();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    toolbarPanel.pressForwardButton_5();
+                    renderRunner.playback.stepForwardSnapshots(5);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    toolbarPanel.pressForwardButton_1();
+                    renderRunner.playback.stepForwardSnapshots(1);
                 }
             }
         });
