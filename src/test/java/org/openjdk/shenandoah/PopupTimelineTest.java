@@ -24,6 +24,7 @@
  */
 package org.openjdk.shenandoah;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -33,16 +34,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class PopupTimelineTest {
-    static {
-        System.setProperty("java.awt.headless", "true");
-    }
     @Test
     public void test() throws IOException {
-        BufferedImage img = new BufferedImage(300, 700, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = img.createGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, 300, 700);
-        new RegionPopUp(0).timelinePaint(g);
-        ImageIO.write(img, "png", new File("timeline.png"));
+        if (!GraphicsEnvironment.isHeadless()) {
+            BufferedImage img = new BufferedImage(300, 700, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = img.createGraphics();
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, 300, 700);
+            new RegionPopUp(0).timelinePaint(g);
+            ImageIO.write(img, "png", new File("timeline.png"));
+        }
     }
 }
