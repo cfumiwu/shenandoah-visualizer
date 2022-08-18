@@ -34,7 +34,7 @@ import java.io.IOException;
 
 public class PopupSpotlightTest {
     static {
-        System.setProperty("java.awt.headless", "false");
+        System.setProperty("java.awt.headless", "true");
     }
     @Test
     public void test() throws IOException {
