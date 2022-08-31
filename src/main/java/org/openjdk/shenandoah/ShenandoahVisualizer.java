@@ -459,7 +459,7 @@ class ShenandoahVisualizer {
 
         int regionWidth, regionHeight;
         int graphWidth, graphHeight;
-        final int STEP_X = 2;
+        final int STEP_X = 4;
 
         final LinkedList<SnapshotView> lastSnapshots;
         final LinkedList<Snapshot> popupSnapshots;
@@ -482,6 +482,18 @@ class ShenandoahVisualizer {
                 return Colors.OLD[s.oldPhase().ordinal()];
             }
             return Colors.TIMELINE_IDLE;
+        }
+        protected static Phase getPhase(SnapshotView s) {
+            if (s.youngPhase() != Phase.IDLE) {
+                return s.youngPhase();
+            }
+            if (s.globalPhase() != Phase.IDLE) {
+                return s.globalPhase();
+            }
+            if (s.oldPhase() != Phase.IDLE) {
+                return s.oldPhase();
+            }
+            return Phase.UNKNOWN;
         }
 
         public abstract void renderGraph(Graphics g);
@@ -672,7 +684,7 @@ class ShenandoahVisualizer {
                 snapshot = cur;
                 lastSnapshots.add(new SnapshotView(cur));
                 popupSnapshots.add(cur);
-                if (lastSnapshots.size() > graphWidth / STEP_X) {
+                if (lastSnapshots.size() > (graphWidth - 50) / STEP_X) {
                     lastSnapshots.removeFirst();
                 }
                 frame.repaint();
@@ -699,22 +711,24 @@ class ShenandoahVisualizer {
             if (lastSnapshots.size() < 2) return;
 
             int pad = 10;
-            int bandHeight = (graphHeight - pad) / 2;
+            int bandHeight = (graphHeight - 30 - pad) / 2;
+            int bandWidth = graphWidth - 50;
+            int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
             int startDiff = graphHeight;
-            int startRaw  = graphHeight - bandHeight - pad;
+            int startRaw  = graphHeight - 30 - bandHeight - pad;
 
             g.setColor(Color.WHITE);
-            g.fillRect(0, 0, graphWidth, graphHeight);
+            g.fillRect(0, 0, bandWidth, graphHeight - 30);
 
             g.setColor(Color.BLACK);
-            g.fillRect(0, 0, graphWidth, bandHeight);
-            g.fillRect(0, bandHeight + pad, graphWidth, bandHeight);
+            g.fillRect(0, 0, bandWidth, bandHeight);
+            g.fillRect(0, bandHeight + pad, bandWidth, bandHeight);
 
             long firstTime = lastSnapshots.getFirst().time();
             long lastTime = lastSnapshots.getLast().time();
-            double stepX = (double) STEP_X * Math.min(lastSnapshots.size(), graphWidth) / (lastTime - firstTime);
+            double stepX = (double) STEP_X * Math.min(lastSnapshots.size(), bandWidth) / (lastTime - firstTime);
 
             for (int i = 0; i < lastSnapshots.size(); i++) {
                 SnapshotView s = lastSnapshots.get(i);
@@ -723,21 +737,31 @@ class ShenandoahVisualizer {
                 if (s.globalPhase() == Phase.IDLE) {
                     if (s.oldPhase() == Phase.MARKING) {
                         g.setColor(Colors.OLD[0]);
-                        g.drawRect(x, 0, 1, bandHeight);
+                        g.drawRect(x, bandHeight + pad, 1, phaseHeight);
                     } else if (s.oldPhase() == Phase.EVACUATING) {
                         g.setColor(Colors.OLD[1]);
-                        g.drawRect(x, 0, 1, bandHeight);
+                        g.drawRect(x, bandHeight + pad + 2*phaseHeight, 1, phaseHeight);
                     }
                 }
-
-                g.setColor(getColor(s));
-                g.drawRect(x, bandHeight + pad, 1, bandHeight);
 
                 if (s.oldCsetPercentage() > 0) {
                     int height = (int) (bandHeight * s.oldCsetPercentage());
                     g.setColor(Colors.OLD[0]);
                     g.drawRect(x, 2*bandHeight + pad - height, 1, height);
                 }
+
+                g.setColor(getColor(s));
+                if (getPhase(s) == Phase.MARKING) {
+                    g.drawRect(x, bandHeight + pad + phaseHeight, 1, phaseHeight);
+                }
+                if (getPhase(s) == Phase.EVACUATING) {
+                    g.drawRect(x, bandHeight + pad + 2*phaseHeight, 1, phaseHeight);
+                }
+                if (getPhase(s) == Phase.UPDATE_REFS) {
+                    g.drawRect(x, bandHeight + pad + 3*phaseHeight, 1, phaseHeight);
+                }
+
+
 
                 if (s.isFullActive()) {
                     g.setColor(Colors.FULL);
@@ -755,14 +779,27 @@ class ShenandoahVisualizer {
                 g.setColor(Colors.LIVE_CSET);
                 g.drawRect(x, (int) Math.round(startRaw - s.collectionSet() * stepY), 1, 1);
 
+                g.setColor(Color.GRAY);
+                g.drawString("OM", bandWidth + 10, bandHeight + 30);
+                g.drawString("M", bandWidth + 10, bandHeight + phaseHeight + 30);
+                g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + 30);
+                g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + 30);
+
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setStroke(new BasicStroke(2));
+                g2.drawLine(0, graphHeight - 25, 0, graphHeight);
+                g2.drawLine(bandWidth / 4, graphHeight - 25, bandWidth / 4, graphHeight);
+                g2.drawLine(bandWidth / 2, graphHeight - 25, bandWidth / 2, graphHeight);
+                g2.drawLine(bandWidth * 3 / 4, graphHeight - 25, bandWidth * 3 / 4, graphHeight);
+
                 // Draw this in the lower band.
                 final int smooth = Math.min(10, i + 1);
                 final int mult = 50;
 
                 SnapshotView ls = lastSnapshots.get(i - smooth + 1);
 
-                g.setColor(Colors.USED);
-                g.drawRect(x, (int) Math.round(startDiff - (s.used() - ls.used()) * stepY * mult / smooth), 1, 1);
+//                g.setColor(Colors.USED);
+//                g.drawRect(x, (int) Math.round(startDiff - (s.used() - ls.used()) * stepY * mult / smooth), 1, 1);
             }
         }
 
@@ -807,14 +844,14 @@ class ShenandoahVisualizer {
             g.drawString(pausesText, 0, ++line * LINE);
 
             line = 4;
-            renderTimeLineLegendItem(g, LINE, Colors.OLD[1], ++line, "Old Marking");
-            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[1], ++line, "Young Marking");
-            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[2], ++line, "Young Evacuation");
-            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[3], ++line, "Young Update References");
+            renderTimeLineLegendItem(g, LINE, Colors.OLD[1], ++line, "Old Marking (OM)");
+            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[1], ++line, "Young Marking (M)");
+            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[2], ++line, "Young Evacuation (E)");
+            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[3], ++line, "Young Update References (UR)");
 
-            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[1], ++line, "Global Marking");
-            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[2], ++line, "Global Evacuation");
-            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[3], ++line, "Global Update References");
+            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[1], ++line, "Global Marking (M)");
+            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[2], ++line, "Global Evacuation (E)");
+            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[3], ++line, "Global Update References (UR)");
 
             renderTimeLineLegendItem(g, LINE, Colors.DEGENERATE, ++line, "Degenerated Cycle");
             renderTimeLineLegendItem(g, LINE, Colors.FULL, ++line, "Full");
@@ -828,6 +865,9 @@ class ShenandoahVisualizer {
         volatile double speed = 1.0;
         volatile int frontSnapshotIndex = 0;
         volatile int endSnapshotIndex = 0;
+        volatile int oneFourthIndex = 0;
+        volatile int oneHalfIndex = 0;
+        volatile int threeFourthIndex = 0;
 
         ToolbarPanel toolbarPanel;
 
@@ -862,8 +902,17 @@ class ShenandoahVisualizer {
                         frame.repaint();
                         repaintPopups();
                     }
-                    if (endSnapshotIndex - frontSnapshotIndex > graphWidth / STEP_X) {
+                    if (endSnapshotIndex - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
                         frontSnapshotIndex++;
+                    }
+                    if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 4) {
+                        oneFourthIndex = endSnapshotIndex - 1;
+                    }
+                    if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 2) {
+                        oneHalfIndex = endSnapshotIndex - 1;
+                    }
+                    if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
+                        threeFourthIndex = endSnapshotIndex - 1;
                     }
                 } else {
                     Snapshot cur = data.snapshot();
@@ -872,8 +921,17 @@ class ShenandoahVisualizer {
                         lastSnapshots.add(new SnapshotView(cur));
                         popupSnapshots.add(cur);
                         endSnapshotIndex = lastSnapshots.size();
-                        if (lastSnapshots.size() - frontSnapshotIndex > graphWidth / STEP_X) {
+                        if (lastSnapshots.size() - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
                             frontSnapshotIndex++;
+                        }
+                        if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 4) {
+                            oneFourthIndex = endSnapshotIndex - 1;
+                        }
+                        if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 2) {
+                            oneHalfIndex = endSnapshotIndex - 1;
+                        }
+                        if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
+                            threeFourthIndex = endSnapshotIndex - 1;
                         }
                         toolbarPanel.setValue(popupSnapshots.size());
                         frame.repaint();
@@ -939,12 +997,21 @@ class ShenandoahVisualizer {
                     lastSnapshots.add(new SnapshotView(cur));
                     popupSnapshots.add(cur);
                     toolbarPanel.setValue(popupSnapshots.size());
+                    if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 4) {
+                        oneFourthIndex = endSnapshotIndex - 1;
+                    }
+                    if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 2) {
+                        oneHalfIndex = endSnapshotIndex - 1;
+                    }
+                    if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
+                        threeFourthIndex = endSnapshotIndex - 1;
+                    }
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
             }
 
-            while (endSnapshotIndex - frontSnapshotIndex > graphWidth / STEP_X) {
+            while (endSnapshotIndex - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
                 frontSnapshotIndex++;
             }
 
@@ -967,39 +1034,52 @@ class ShenandoahVisualizer {
             if (endSnapshotIndex - frontSnapshotIndex < 2) return;
 
             int pad = 10;
-            int bandHeight = (graphHeight - pad) / 2;
+            int bandHeight = (graphHeight - 30 - pad) / 2;
+            int bandWidth  = graphWidth - 50;
+            int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
             int startDiff = graphHeight;
-            int startRaw  = graphHeight - bandHeight - pad;
+            int startRaw  = graphHeight - 30 - bandHeight - pad;
 
             g.setColor(Color.WHITE);
-            g.fillRect(0, 0, graphWidth, graphHeight);
+            g.fillRect(0, 0, bandWidth, graphHeight - 30);
 
             g.setColor(Color.BLACK);
-            g.fillRect(0, 0, graphWidth, bandHeight);
-            g.fillRect(0, bandHeight + pad, graphWidth, bandHeight);
+            g.fillRect(0, 0, bandWidth, bandHeight);
+            g.fillRect(0, bandHeight + pad, bandWidth, bandHeight);
 
             long firstTime = lastSnapshots.get(frontSnapshotIndex).time();
             long lastTime = lastSnapshots.get(endSnapshotIndex - 1).time();
-            double stepX = (double) STEP_X * Math.min(endSnapshotIndex - frontSnapshotIndex, graphWidth) / (lastTime - firstTime);
+            double stepX = (double) STEP_X * Math.min(endSnapshotIndex - frontSnapshotIndex, bandWidth) / (lastTime - firstTime);
 
             for (int i = frontSnapshotIndex; i < endSnapshotIndex; i++) {
                 SnapshotView s = lastSnapshots.get(i);
                 int x = (int) Math.round((s.time() - firstTime) * stepX);
+                if (x == bandWidth / 4) {
+                    oneFourthIndex = i;
+                }
 
                 if (s.oldPhase() == Phase.MARKING && s.globalPhase() == Phase.IDLE) {
                     g.setColor(Colors.OLD[0]);
-                    g.drawRect(x, 0, 1, bandHeight);
+                    g.drawRect(x, bandHeight + pad, 1, phaseHeight);
                 }
-
-                g.setColor(getColor(s));
-                g.drawRect(x, bandHeight + pad, 1, bandHeight);
 
                 if (s.oldCsetPercentage() > 0) {
                     int height = (int) (bandHeight * s.oldCsetPercentage());
                     g.setColor(Colors.OLD[0]);
                     g.drawRect(x, 2*bandHeight + pad - height, 1, height);
+                }
+
+                g.setColor(getColor(s));
+                if (getPhase(s) == Phase.MARKING) {
+                    g.drawRect(x, bandHeight + pad + phaseHeight, 1, phaseHeight);
+                }
+                if (getPhase(s) == Phase.EVACUATING) {
+                    g.drawRect(x, bandHeight + pad + 2*phaseHeight, 1, phaseHeight);
+                }
+                if (getPhase(s) == Phase.UPDATE_REFS) {
+                    g.drawRect(x, bandHeight + pad + 3*phaseHeight, 1, phaseHeight);
                 }
 
                 if (s.isFullActive()) {
@@ -1018,14 +1098,43 @@ class ShenandoahVisualizer {
                 g.setColor(Colors.LIVE_CSET);
                 g.drawRect(x, (int) Math.round(startRaw - s.collectionSet() * stepY), 1, 1);
 
+                g.setColor(Color.GRAY);
+                g.drawString("OM", bandWidth + 10, bandHeight + 30);
+                g.drawString("M", bandWidth + 10, bandHeight + phaseHeight + 30);
+                g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + 30);
+                g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + 30);
+
+
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setStroke(new BasicStroke(2));
+                g2.drawLine(0, graphHeight - 25, 0, graphHeight);
+                g2.drawLine(bandWidth / 4, graphHeight - 25, bandWidth / 4, graphHeight);
+                g2.drawLine(bandWidth / 2, graphHeight - 25, bandWidth / 2, graphHeight);
+                g2.drawLine(bandWidth * 3 / 4, graphHeight - 25, bandWidth * 3 / 4, graphHeight);
+                g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex).time()), 3, graphHeight - 8);
+                if (frontSnapshotIndex > 0) {
+                    g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4).time()), bandWidth / 4 + 3, graphHeight - 8);
+                    g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2).time()), bandWidth / 2 + 3, graphHeight - 8);
+                    g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4).time()), bandWidth * 3 / 4 + 3, graphHeight - 8);
+                }
+                if (x >= bandWidth / 4 && frontSnapshotIndex == 0 && popupSnapshots.size() > oneFourthIndex) {
+                    g.drawString(Long.toString(popupSnapshots.get(oneFourthIndex).time()), bandWidth / 4 + 3, graphHeight - 8);
+                }
+                if (x >= bandWidth / 2 && frontSnapshotIndex == 0 && popupSnapshots.size() > oneHalfIndex) {
+                    g.drawString(Long.toString(popupSnapshots.get(oneHalfIndex).time()), bandWidth / 2 + 3, graphHeight - 8);
+                }
+                if (x >= bandWidth * 3 / 4 && frontSnapshotIndex == 0 && popupSnapshots.size() > threeFourthIndex) {
+                    g.drawString(Long.toString(popupSnapshots.get(threeFourthIndex).time()), bandWidth * 3 / 4 + 3, graphHeight - 8);
+                }
+
                 // Draw this in the lower band.
                 final int smooth = Math.min(10, i + 1);
                 final int mult = 50;
 
                 SnapshotView ls = lastSnapshots.get(i - smooth + 1);
 
-                g.setColor(Colors.USED);
-                g.drawRect(x, (int) Math.round(startDiff - (s.used() - ls.used()) * stepY * mult / smooth), 1, 1);
+//                g.setColor(Colors.USED);
+//                g.drawRect(x, (int) Math.round(startDiff - (s.used() - ls.used()) * stepY * mult / smooth), 1, 1);
             }
         }
 
@@ -1064,14 +1173,14 @@ class ShenandoahVisualizer {
             g.drawString(liveStatusLine(), 0, ++line * LINE);
 
             line = 4;
-            renderTimeLineLegendItem(g, LINE, Colors.OLD[1], ++line, "Old Marking");
-            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[1], ++line, "Young Marking");
-            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[2], ++line, "Young Evacuation");
-            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[3], ++line, "Young Update References");
+            renderTimeLineLegendItem(g, LINE, Colors.OLD[1], ++line, "Old Marking (OM)");
+            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[1], ++line, "Young Marking (M)");
+            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[2], ++line, "Young Evacuation (E)");
+            renderTimeLineLegendItem(g, LINE, Colors.YOUNG[3], ++line, "Young Update References (UR)");
 
-            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[1], ++line, "Global Marking");
-            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[2], ++line, "Global Evacuation");
-            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[3], ++line, "Global Update References");
+            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[1], ++line, "Global Marking (M)");
+            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[2], ++line, "Global Evacuation (E)");
+            renderTimeLineLegendItem(g, LINE, Colors.GLOBAL[3], ++line, "Global Update References (UR)");
 
             renderTimeLineLegendItem(g, LINE, Colors.DEGENERATE, ++line, "Degenerated Young");
             renderTimeLineLegendItem(g, LINE, Colors.FULL, ++line, "Full");
