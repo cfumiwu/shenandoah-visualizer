@@ -665,9 +665,9 @@ class ShenandoahVisualizer {
 
     public static class RenderLive extends Render {
         volatile DataProvider data;
-        volatile int oneFourthIndex = 0;
-        volatile int oneHalfIndex = 0;
-        volatile int threeFourthIndex =0;
+        int oneFourthIndex = 0;
+        int oneHalfIndex = 0;
+        int threeFourthIndex =0;
 
         public RenderLive(JFrame frame) {
             super(frame);
@@ -734,7 +734,6 @@ class ShenandoahVisualizer {
             int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
-            int startDiff = graphHeight;
             int startRaw  = graphHeight - bandHeight - pad;
 
             g.setColor(Color.WHITE);
@@ -824,14 +823,6 @@ class ShenandoahVisualizer {
 
 
 
-                // Draw this in the lower band.
-                final int smooth = Math.min(10, i + 1);
-                final int mult = 50;
-
-                SnapshotView ls = lastSnapshots.get(i - smooth + 1);
-
-//                g.setColor(Colors.USED);
-//                g.drawRect(x, (int) Math.round(startDiff - (s.used() - ls.used()) * stepY * mult / smooth), 1, 1);
             }
         }
 
@@ -897,9 +888,9 @@ class ShenandoahVisualizer {
         volatile double speed = 1.0;
         volatile int frontSnapshotIndex = 0;
         volatile int endSnapshotIndex = 0;
-        volatile int oneFourthIndex = 0;
-        volatile int oneHalfIndex = 0;
-        volatile int threeFourthIndex = 0;
+        int oneFourthIndex = 0;
+        int oneHalfIndex = 0;
+        int threeFourthIndex = 0;
 
         ToolbarPanel toolbarPanel;
 
@@ -934,9 +925,6 @@ class ShenandoahVisualizer {
                         frame.repaint();
                         repaintPopups();
                     }
-                    if (endSnapshotIndex - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
-                        frontSnapshotIndex++;
-                    }
                     if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 4) {
                         oneFourthIndex = endSnapshotIndex - 1;
                     }
@@ -951,6 +939,9 @@ class ShenandoahVisualizer {
                         oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
                         threeFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4;
                     }
+                    if (endSnapshotIndex - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
+                        frontSnapshotIndex++;
+                    }
                 } else {
                     Snapshot cur = data.snapshot();
                     if (!cur.equals(snapshot)) {
@@ -958,9 +949,6 @@ class ShenandoahVisualizer {
                         lastSnapshots.add(new SnapshotView(cur));
                         popupSnapshots.add(cur);
                         endSnapshotIndex = lastSnapshots.size();
-                        if (lastSnapshots.size() - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
-                            frontSnapshotIndex++;
-                        }
                         if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 4) {
                             oneFourthIndex = endSnapshotIndex - 1;
                         }
@@ -974,6 +962,9 @@ class ShenandoahVisualizer {
                             oneFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4;
                             oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
                             threeFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4;
+                        }
+                        if (lastSnapshots.size() - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
+                            frontSnapshotIndex++;
                         }
                         toolbarPanel.setValue(popupSnapshots.size());
                         frame.repaint();
@@ -1086,7 +1077,6 @@ class ShenandoahVisualizer {
             int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
-            int startDiff = graphHeight;
             int startRaw  = graphHeight - bandHeight - pad;
 
             g.setColor(Color.WHITE);
@@ -1165,14 +1155,6 @@ class ShenandoahVisualizer {
                 if (x >= bandWidth * 3 / 4 && popupSnapshots.size() > threeFourthIndex) {
                     g.drawString(Long.toString(popupSnapshots.get(threeFourthIndex).time()) + " ms", bandWidth * 3 / 4 + 3, bandHeight + 20);
                 }
-                // Draw this in the lower band.
-                final int smooth = Math.min(10, i + 1);
-                final int mult = 50;
-
-                SnapshotView ls = lastSnapshots.get(i - smooth + 1);
-
-//                g.setColor(Colors.USED);
-//                g.drawRect(x, (int) Math.round(startDiff - (s.used() - ls.used()) * stepY * mult / smooth), 1, 1);
             }
         }
 
