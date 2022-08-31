@@ -958,8 +958,8 @@ class ShenandoahVisualizer {
                         frame.repaint();
                         repaintPopups();
                     }
+                    setIndex();
                 }
-                setIndex();
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
                     toolbarPanel.setValue(popupSnapshots.size());
                     System.out.println("Should only enter here at end of snapshots.");
@@ -967,6 +967,7 @@ class ShenandoahVisualizer {
                     isPaused = true;
                 }
             } else {
+                setIndex();
                 repaintPopups();
                 if (data.stopwatch.isStarted()) {
                     data.controlStopwatch("STOP");
