@@ -168,6 +168,7 @@ public class ToolbarPanel extends JPanel
 
         timestampField = new JTextField();
         timestampField.setEditable(false);
+        timestampField.setFocusable(false);
         timestampToolBar.add(timestampField);
 
         addPlaybackButtons();
@@ -453,7 +454,6 @@ public class ToolbarPanel extends JPanel
     public int currentSliderValue() {
         if ((slider.getValue() - 1) >= 0) {
             timestampField.setText(Long.toString(snapshots.get(slider.getValue() - 1).time()) + " ms");
-            timestampField.setFocusable(false);
         }
         return slider.getValue();
     }
