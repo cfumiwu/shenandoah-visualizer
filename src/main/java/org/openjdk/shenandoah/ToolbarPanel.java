@@ -122,6 +122,7 @@ public class ToolbarPanel extends JPanel
 
         fileNameField = new JTextField();
         fileNameField.setEditable(false);
+        fileNameField.setFocusable(false);
         fileToolbar.add(fileNameField);
 
         {
@@ -151,6 +152,7 @@ public class ToolbarPanel extends JPanel
 
         lastActionField = new JTextField();
         lastActionField.setEditable(false);
+        lastActionField.setFocusable(false);
         statusToolbar.add(lastActionField);
 
         modeLabel = new JLabel("Mode:");
@@ -158,6 +160,7 @@ public class ToolbarPanel extends JPanel
 
         modeField = new JTextField();
         modeField.setEditable(false);
+        modeField.setFocusable(false);
         statusToolbar.add(modeField);
 
         timestampLabel = new JLabel("Timestamp: ");
@@ -450,6 +453,7 @@ public class ToolbarPanel extends JPanel
     public int currentSliderValue() {
         if ((slider.getValue() - 1) >= 0) {
             timestampField.setText(Long.toString(snapshots.get(slider.getValue() - 1).time()) + " ms");
+            timestampField.setFocusable(false);
         }
         return slider.getValue();
     }

@@ -665,6 +665,9 @@ class ShenandoahVisualizer {
 
     public static class RenderLive extends Render {
         volatile DataProvider data;
+        volatile int oneFourthIndex = 0;
+        volatile int oneHalfIndex = 0;
+        volatile int threeFourthIndex =0;
 
         public RenderLive(JFrame frame) {
             super(frame);
@@ -684,8 +687,23 @@ class ShenandoahVisualizer {
                 snapshot = cur;
                 lastSnapshots.add(new SnapshotView(cur));
                 popupSnapshots.add(cur);
+
                 if (lastSnapshots.size() > (graphWidth - 50) / STEP_X) {
                     lastSnapshots.removeFirst();
+                    oneFourthIndex = lastSnapshots.size() / 4;
+                    oneHalfIndex = lastSnapshots.size() / 2;
+                    threeFourthIndex = lastSnapshots.size() * 3 / 4;
+
+                } else {
+                    if (lastSnapshots.size() == (graphWidth - 50) / STEP_X / 4) {
+                        oneFourthIndex = lastSnapshots.size() - 1;
+                    }
+                    if (lastSnapshots.size() == (graphWidth - 50) / STEP_X / 2) {
+                        oneHalfIndex = lastSnapshots.size() - 1;
+                    }
+                    if (lastSnapshots.size() == (graphWidth - 50) * 3 / STEP_X / 4) {
+                        threeFourthIndex = lastSnapshots.size() - 1;
+                    }
                 }
                 frame.repaint();
                 repaintPopups();
@@ -710,17 +728,17 @@ class ShenandoahVisualizer {
         public synchronized void renderGraph(Graphics g) {
             if (lastSnapshots.size() < 2) return;
 
-            int pad = 10;
-            int bandHeight = (graphHeight - 30 - pad) / 2;
+            int pad = 30;
+            int bandHeight = (graphHeight - pad) / 2;
             int bandWidth = graphWidth - 50;
             int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
             int startDiff = graphHeight;
-            int startRaw  = graphHeight - 30 - bandHeight - pad;
+            int startRaw  = graphHeight - bandHeight - pad;
 
             g.setColor(Color.WHITE);
-            g.fillRect(0, 0, bandWidth, graphHeight - 30);
+            g.fillRect(0, 0, bandWidth, graphHeight);
 
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, bandWidth, bandHeight);
@@ -780,17 +798,31 @@ class ShenandoahVisualizer {
                 g.drawRect(x, (int) Math.round(startRaw - s.collectionSet() * stepY), 1, 1);
 
                 g.setColor(Color.GRAY);
-                g.drawString("OM", bandWidth + 10, bandHeight + 30);
-                g.drawString("M", bandWidth + 10, bandHeight + phaseHeight + 30);
-                g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + 30);
-                g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + 30);
+                g.drawString("OM", bandWidth + 10, bandHeight + pad + 20);
+                g.drawString("M", bandWidth + 10, bandHeight + phaseHeight + pad + 20);
+                g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + pad + 20);
+                g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + pad + 20);
 
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setStroke(new BasicStroke(2));
-                g2.drawLine(0, graphHeight - 25, 0, graphHeight);
-                g2.drawLine(bandWidth / 4, graphHeight - 25, bandWidth / 4, graphHeight);
-                g2.drawLine(bandWidth / 2, graphHeight - 25, bandWidth / 2, graphHeight);
-                g2.drawLine(bandWidth * 3 / 4, graphHeight - 25, bandWidth * 3 / 4, graphHeight);
+                g2.drawLine(0, bandHeight + 5, 0, bandHeight + pad - 5);
+                g2.drawLine(bandWidth / 4, bandHeight + 5, bandWidth / 4, bandHeight + pad - 5);
+                g2.drawLine(bandWidth / 2, bandHeight + 5, bandWidth / 2, bandHeight + pad - 5);
+                g2.drawLine(bandWidth * 3 / 4, bandHeight + 5, bandWidth * 3 / 4, bandHeight + pad - 5);
+
+                g.drawString(Long.toString(lastSnapshots.get(0).time()) + " ms", 3, bandHeight + 20);
+
+                if (lastSnapshots.size() > (graphWidth - 50) / STEP_X / 4 ) {
+                    g.drawString(Long.toString(lastSnapshots.get(oneFourthIndex).time()) + " ms", bandWidth / 4 + 3, bandHeight + 20);
+                }
+                if (lastSnapshots.size() > (graphWidth - 50) / STEP_X / 2) {
+                    g.drawString(Long.toString(lastSnapshots.get(oneHalfIndex).time()) + " ms", bandWidth / 2 + 3, bandHeight + 20);
+                }
+                if (lastSnapshots.size() > (graphWidth - 50) * 3 / STEP_X / 4) {
+                    g.drawString(Long.toString(lastSnapshots.get(threeFourthIndex).time()) + " ms", bandWidth * 3 / 4 + 3, bandHeight + 20);
+                }
+
+
 
                 // Draw this in the lower band.
                 final int smooth = Math.min(10, i + 1);
@@ -914,6 +946,11 @@ class ShenandoahVisualizer {
                     if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
                         threeFourthIndex = endSnapshotIndex - 1;
                     }
+                    if (frontSnapshotIndex > 0) {
+                        oneFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4;
+                        oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
+                        threeFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4;
+                    }
                 } else {
                     Snapshot cur = data.snapshot();
                     if (!cur.equals(snapshot)) {
@@ -932,6 +969,11 @@ class ShenandoahVisualizer {
                         }
                         if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
                             threeFourthIndex = endSnapshotIndex - 1;
+                        }
+                        if (frontSnapshotIndex > 0) {
+                            oneFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4;
+                            oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
+                            threeFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4;
                         }
                         toolbarPanel.setValue(popupSnapshots.size());
                         frame.repaint();
@@ -1006,6 +1048,11 @@ class ShenandoahVisualizer {
                     if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
                         threeFourthIndex = endSnapshotIndex - 1;
                     }
+                    if (frontSnapshotIndex > 0) {
+                        oneFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4;
+                        oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
+                        threeFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4;
+                    }
                 }
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
@@ -1033,17 +1080,17 @@ class ShenandoahVisualizer {
         public synchronized void renderGraph(Graphics g) {
             if (endSnapshotIndex - frontSnapshotIndex < 2) return;
 
-            int pad = 10;
-            int bandHeight = (graphHeight - 30 - pad) / 2;
+            int pad = 30;
+            int bandHeight = (graphHeight - pad) / 2;
             int bandWidth  = graphWidth - 50;
             int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
             int startDiff = graphHeight;
-            int startRaw  = graphHeight - 30 - bandHeight - pad;
+            int startRaw  = graphHeight - bandHeight - pad;
 
             g.setColor(Color.WHITE);
-            g.fillRect(0, 0, bandWidth, graphHeight - 30);
+            g.fillRect(0, 0, bandWidth, graphHeight);
 
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, bandWidth, bandHeight);
@@ -1056,9 +1103,6 @@ class ShenandoahVisualizer {
             for (int i = frontSnapshotIndex; i < endSnapshotIndex; i++) {
                 SnapshotView s = lastSnapshots.get(i);
                 int x = (int) Math.round((s.time() - firstTime) * stepX);
-                if (x == bandWidth / 4) {
-                    oneFourthIndex = i;
-                }
 
                 if (s.oldPhase() == Phase.MARKING && s.globalPhase() == Phase.IDLE) {
                     g.setColor(Colors.OLD[0]);
@@ -1099,34 +1143,28 @@ class ShenandoahVisualizer {
                 g.drawRect(x, (int) Math.round(startRaw - s.collectionSet() * stepY), 1, 1);
 
                 g.setColor(Color.GRAY);
-                g.drawString("OM", bandWidth + 10, bandHeight + 30);
-                g.drawString("M", bandWidth + 10, bandHeight + phaseHeight + 30);
-                g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + 30);
-                g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + 30);
+                g.drawString("OM", bandWidth + 10, bandHeight + pad + 20);
+                g.drawString("M", bandWidth + 10, bandHeight + phaseHeight + pad + 20);
+                g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + pad + 20);
+                g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + pad + 20);
 
 
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setStroke(new BasicStroke(2));
-                g2.drawLine(0, graphHeight - 25, 0, graphHeight);
-                g2.drawLine(bandWidth / 4, graphHeight - 25, bandWidth / 4, graphHeight);
-                g2.drawLine(bandWidth / 2, graphHeight - 25, bandWidth / 2, graphHeight);
-                g2.drawLine(bandWidth * 3 / 4, graphHeight - 25, bandWidth * 3 / 4, graphHeight);
-                g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex).time()), 3, graphHeight - 8);
-                if (frontSnapshotIndex > 0) {
-                    g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4).time()), bandWidth / 4 + 3, graphHeight - 8);
-                    g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2).time()), bandWidth / 2 + 3, graphHeight - 8);
-                    g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4).time()), bandWidth * 3 / 4 + 3, graphHeight - 8);
+                g2.drawLine(0, bandHeight + 5, 0, bandHeight + pad - 5);
+                g2.drawLine(bandWidth / 4, bandHeight + 5, bandWidth / 4, bandHeight + pad - 5);
+                g2.drawLine(bandWidth / 2, bandHeight + 5, bandWidth / 2, bandHeight + pad - 5);
+                g2.drawLine(bandWidth * 3 / 4, bandHeight + 5, bandWidth * 3 / 4, bandHeight + pad - 5);
+                g.drawString(Long.toString(popupSnapshots.get(frontSnapshotIndex).time()) + " ms", 3, bandHeight + 20);
+                if (x >= bandWidth / 4 && popupSnapshots.size() > oneFourthIndex) {
+                    g.drawString(Long.toString(popupSnapshots.get(oneFourthIndex).time()) + " ms", bandWidth / 4 + 3, bandHeight + 20);
                 }
-                if (x >= bandWidth / 4 && frontSnapshotIndex == 0 && popupSnapshots.size() > oneFourthIndex) {
-                    g.drawString(Long.toString(popupSnapshots.get(oneFourthIndex).time()), bandWidth / 4 + 3, graphHeight - 8);
+                if (x >= bandWidth / 2 && popupSnapshots.size() > oneHalfIndex) {
+                    g.drawString(Long.toString(popupSnapshots.get(oneHalfIndex).time()) + " ms", bandWidth / 2 + 3, bandHeight + 20);
                 }
-                if (x >= bandWidth / 2 && frontSnapshotIndex == 0 && popupSnapshots.size() > oneHalfIndex) {
-                    g.drawString(Long.toString(popupSnapshots.get(oneHalfIndex).time()), bandWidth / 2 + 3, graphHeight - 8);
+                if (x >= bandWidth * 3 / 4 && popupSnapshots.size() > threeFourthIndex) {
+                    g.drawString(Long.toString(popupSnapshots.get(threeFourthIndex).time()) + " ms", bandWidth * 3 / 4 + 3, bandHeight + 20);
                 }
-                if (x >= bandWidth * 3 / 4 && frontSnapshotIndex == 0 && popupSnapshots.size() > threeFourthIndex) {
-                    g.drawString(Long.toString(popupSnapshots.get(threeFourthIndex).time()), bandWidth * 3 / 4 + 3, graphHeight - 8);
-                }
-
                 // Draw this in the lower band.
                 final int smooth = Math.min(10, i + 1);
                 final int mult = 50;
