@@ -667,7 +667,7 @@ class ShenandoahVisualizer {
         volatile DataProvider data;
         int oneFourthIndex = 0;
         int oneHalfIndex = 0;
-        int threeFourthIndex =0;
+        int threeFourthIndex = 0;
 
         public RenderLive(JFrame frame) {
             super(frame);
