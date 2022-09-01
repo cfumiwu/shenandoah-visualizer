@@ -460,6 +460,7 @@ class ShenandoahVisualizer {
         int regionWidth, regionHeight;
         int graphWidth, graphHeight;
         final int STEP_X = 4;
+        final int phaseLabelWidth = 50;
 
         final LinkedList<SnapshotView> lastSnapshots;
         final LinkedList<Snapshot> popupSnapshots;
@@ -683,7 +684,7 @@ class ShenandoahVisualizer {
 
         public synchronized void run() {
             Snapshot cur = data.snapshot();
-            int endBandIndex = (graphWidth - 50) / STEP_X;
+            int endBandIndex = (graphWidth - phaseLabelWidth) / STEP_X;
             if (!cur.equals(snapshot)) {
                 snapshot = cur;
                 lastSnapshots.add(new SnapshotView(cur));
@@ -731,7 +732,7 @@ class ShenandoahVisualizer {
 
             int pad = 30;
             int bandHeight = (graphHeight - pad) / 2;
-            int bandWidth = graphWidth - 50;
+            int bandWidth = graphWidth - phaseLabelWidth;
             int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
@@ -809,8 +810,8 @@ class ShenandoahVisualizer {
         public synchronized void renderTimestampLabel(Graphics g) {
             int pad = 30;
             int bandHeight = (graphHeight - pad) / 2;
-            int bandWidth = graphWidth - 50;
-            int endBandIndex = (graphWidth - 50) / STEP_X;
+            int bandWidth = graphWidth - phaseLabelWidth;
+            int endBandIndex = (graphWidth - phaseLabelWidth) / STEP_X;
 
             Graphics2D g2 = (Graphics2D) g;
             g2.setStroke(new BasicStroke(2));
@@ -914,8 +915,8 @@ class ShenandoahVisualizer {
             this.snapshot = data.snapshot();
             this.isPaused = false;
         }
-        public void updateTimestampLabelIndex() {
-            int endBandIndex = (graphWidth - 50) / STEP_X;
+        public void updateTimestampLabelIndexes() {
+            int endBandIndex = (graphWidth - phaseLabelWidth) / STEP_X;
             if (frontSnapshotIndex > 0) {
                 oneFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4;
                 oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
@@ -934,7 +935,7 @@ class ShenandoahVisualizer {
         }
 
         public synchronized void run() {
-            int endBandIndex = (graphWidth - 50) / STEP_X;
+            int endBandIndex = (graphWidth - phaseLabelWidth) / STEP_X;
             if (!isPaused) {
                 if (!data.stopwatch.isStarted()) {
                     data.controlStopwatch("START");
@@ -968,7 +969,7 @@ class ShenandoahVisualizer {
                         repaintPopups();
                     }
                 }
-                updateTimestampLabelIndex();
+                updateTimestampLabelIndexes();
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
                     toolbarPanel.setValue(popupSnapshots.size());
                     System.out.println("Should only enter here at end of snapshots.");
@@ -976,7 +977,7 @@ class ShenandoahVisualizer {
                     isPaused = true;
                 }
             } else {
-                updateTimestampLabelIndex();
+                updateTimestampLabelIndexes();
                 repaintPopups();
                 if (data.stopwatch.isStarted()) {
                     data.controlStopwatch("STOP");
@@ -1001,7 +1002,7 @@ class ShenandoahVisualizer {
                     popupSnapshots.remove(popupSnapshots.size() - 1);
                 }
             }
-            updateTimestampLabelIndex();
+            updateTimestampLabelIndexes();
             toolbarPanel.setValue(popupSnapshots.size());
 
             frame.repaint();
@@ -1011,7 +1012,7 @@ class ShenandoahVisualizer {
         public synchronized void stepForwardSnapshots(int n) {
             if (lastSnapshots.size() == 0) return;
 
-            int endBandIndex = (graphWidth - 50) / STEP_X;
+            int endBandIndex = (graphWidth - phaseLabelWidth) / STEP_X;
             for (int i = 0; i < n; i++) {
                 if (endSnapshotIndex < lastSnapshots.size()) {
                     int index = Math.max(endSnapshotIndex, 0);
@@ -1032,7 +1033,7 @@ class ShenandoahVisualizer {
                     popupSnapshots.add(cur);
                     toolbarPanel.setValue(popupSnapshots.size());
                 }
-                updateTimestampLabelIndex();
+                updateTimestampLabelIndexes();
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
             }
@@ -1061,7 +1062,7 @@ class ShenandoahVisualizer {
 
             int pad = 30;
             int bandHeight = (graphHeight - pad) / 2;
-            int bandWidth  = graphWidth - 50;
+            int bandWidth  = graphWidth - phaseLabelWidth;
             int phaseHeight = bandHeight / 4;
             double stepY = 1D * bandHeight / snapshot.total();
 
