@@ -28,6 +28,7 @@ import org.HdrHistogram.Histogram;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.synth.SynthTextPaneUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -683,25 +684,26 @@ class ShenandoahVisualizer {
 
         public synchronized void run() {
             Snapshot cur = data.snapshot();
+            int endBandIndex = (graphWidth - 50) / STEP_X;
             if (!cur.equals(snapshot)) {
                 snapshot = cur;
                 lastSnapshots.add(new SnapshotView(cur));
                 popupSnapshots.add(cur);
 
-                if (lastSnapshots.size() > (graphWidth - 50) / STEP_X) {
+                if (lastSnapshots.size() > endBandIndex) {
                     lastSnapshots.removeFirst();
                     oneFourthIndex = lastSnapshots.size() / 4;
                     oneHalfIndex = lastSnapshots.size() / 2;
                     threeFourthIndex = lastSnapshots.size() * 3 / 4;
 
                 } else {
-                    if (lastSnapshots.size() == (graphWidth - 50) / STEP_X / 4) {
+                    if (lastSnapshots.size() == endBandIndex / 4) {
                         oneFourthIndex = lastSnapshots.size() - 1;
                     }
-                    if (lastSnapshots.size() == (graphWidth - 50) / STEP_X / 2) {
+                    if (lastSnapshots.size() == endBandIndex / 2) {
                         oneHalfIndex = lastSnapshots.size() - 1;
                     }
-                    if (lastSnapshots.size() == (graphWidth - 50) * 3 / STEP_X / 4) {
+                    if (lastSnapshots.size() == endBandIndex * 3 / 4) {
                         threeFourthIndex = lastSnapshots.size() - 1;
                     }
                 }
@@ -802,27 +804,32 @@ class ShenandoahVisualizer {
                 g.drawString("E", bandWidth + 10, bandHeight + 2*phaseHeight + pad + 20);
                 g.drawString("UR", bandWidth + 10, bandHeight + 3*phaseHeight + pad + 20);
 
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setStroke(new BasicStroke(2));
-                g2.drawLine(0, bandHeight + 5, 0, bandHeight + pad - 5);
-                g2.drawLine(bandWidth / 4, bandHeight + 5, bandWidth / 4, bandHeight + pad - 5);
-                g2.drawLine(bandWidth / 2, bandHeight + 5, bandWidth / 2, bandHeight + pad - 5);
-                g2.drawLine(bandWidth * 3 / 4, bandHeight + 5, bandWidth * 3 / 4, bandHeight + pad - 5);
+                renderTimestampLabel(g);
+            }
+        }
+        public synchronized void renderTimestampLabel(Graphics g) {
+            int pad = 30;
+            int bandHeight = (graphHeight - pad) / 2;
+            int bandWidth = graphWidth - 50;
+            int endBandIndex = (graphWidth - 50) / STEP_X;
 
-                g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(0).time()) + " ms", 3, bandHeight + 20);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setStroke(new BasicStroke(2));
+            g2.drawLine(0, bandHeight + 5, 0, bandHeight + pad - 5);
+            g2.drawLine(bandWidth / 4, bandHeight + 5, bandWidth / 4, bandHeight + pad - 5);
+            g2.drawLine(bandWidth / 2, bandHeight + 5, bandWidth / 2, bandHeight + pad - 5);
+            g2.drawLine(bandWidth * 3 / 4, bandHeight + 5, bandWidth * 3 / 4, bandHeight + pad - 5);
 
-                if (lastSnapshots.size() > (graphWidth - 50) / STEP_X / 4 ) {
-                    g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(oneFourthIndex).time()) + " ms", bandWidth / 4 + 3, bandHeight + 20);
-                }
-                if (lastSnapshots.size() > (graphWidth - 50) / STEP_X / 2) {
-                    g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(oneHalfIndex).time()) + " ms", bandWidth / 2 + 3, bandHeight + 20);
-                }
-                if (lastSnapshots.size() > (graphWidth - 50) * 3 / STEP_X / 4) {
-                    g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(threeFourthIndex).time()) + " ms", bandWidth * 3 / 4 + 3, bandHeight + 20);
-                }
+            g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(0).time()) + " ms", 3, bandHeight + 20);
 
-
-
+            if (lastSnapshots.size() > endBandIndex / 4 ) {
+                g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(oneFourthIndex).time()) + " ms", bandWidth / 4 + 3, bandHeight + 20);
+            }
+            if (lastSnapshots.size() > endBandIndex / 2) {
+                g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(oneHalfIndex).time()) + " ms", bandWidth / 2 + 3, bandHeight + 20);
+            }
+            if (lastSnapshots.size() > endBandIndex * 3 / 4) {
+                g.drawString("-" + Long.toString(lastSnapshots.get(lastSnapshots.size() - 1). time() - lastSnapshots.get(threeFourthIndex).time()) + " ms", bandWidth * 3 / 4 + 3, bandHeight + 20);
             }
         }
 
@@ -908,24 +915,27 @@ class ShenandoahVisualizer {
             this.snapshot = data.snapshot();
             this.isPaused = false;
         }
-        public void setIndex() {
-            if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 4) {
-                oneFourthIndex = endSnapshotIndex - 1;
-            }
-            if (endSnapshotIndex == (graphWidth - 50) / STEP_X / 2) {
-                oneHalfIndex = endSnapshotIndex - 1;
-            }
-            if (endSnapshotIndex == (graphWidth - 50) * 3 / STEP_X / 4) {
-                threeFourthIndex = endSnapshotIndex - 1;
-            }
+        public void updateTimestampLabelIndex() {
+            int endBandIndex = (graphWidth - 50) / STEP_X;
             if (frontSnapshotIndex > 0) {
                 oneFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 4;
                 oneHalfIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) / 2;
                 threeFourthIndex = frontSnapshotIndex + (endSnapshotIndex - frontSnapshotIndex) * 3 / 4;
+            } else {
+                if (endSnapshotIndex == endBandIndex / 4) {
+                    oneFourthIndex = endSnapshotIndex - 1;
+                }
+                if (endSnapshotIndex == endBandIndex / 2) {
+                    oneHalfIndex = endSnapshotIndex - 1;
+                }
+                if (endSnapshotIndex == endBandIndex * 3 / 4) {
+                    threeFourthIndex = endSnapshotIndex - 1;
+                }
             }
         }
 
         public synchronized void run() {
+            int endBandIndex = (graphWidth - 50) / STEP_X;
             if (!isPaused) {
                 if (!data.stopwatch.isStarted()) {
                     data.controlStopwatch("START");
@@ -941,7 +951,7 @@ class ShenandoahVisualizer {
                         frame.repaint();
                         repaintPopups();
                     }
-                    if (endSnapshotIndex - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
+                    if (endSnapshotIndex - frontSnapshotIndex > endBandIndex) {
                         frontSnapshotIndex++;
                     }
                 } else {
@@ -951,7 +961,7 @@ class ShenandoahVisualizer {
                         lastSnapshots.add(new SnapshotView(cur));
                         popupSnapshots.add(cur);
                         endSnapshotIndex = lastSnapshots.size();
-                        if (lastSnapshots.size() - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
+                        if (lastSnapshots.size() - frontSnapshotIndex > endBandIndex) {
                             frontSnapshotIndex++;
                         }
                         toolbarPanel.setValue(popupSnapshots.size());
@@ -959,7 +969,7 @@ class ShenandoahVisualizer {
                         repaintPopups();
                     }
                 }
-                setIndex();
+                updateTimestampLabelIndex();
                 if (data.isEndOfSnapshots() && endSnapshotIndex >= lastSnapshots.size()) {
                     toolbarPanel.setValue(popupSnapshots.size());
                     System.out.println("Should only enter here at end of snapshots.");
@@ -967,7 +977,7 @@ class ShenandoahVisualizer {
                     isPaused = true;
                 }
             } else {
-                setIndex();
+                updateTimestampLabelIndex();
                 repaintPopups();
                 if (data.stopwatch.isStarted()) {
                     data.controlStopwatch("STOP");
@@ -992,7 +1002,7 @@ class ShenandoahVisualizer {
                     popupSnapshots.remove(popupSnapshots.size() - 1);
                 }
             }
-            setIndex();
+            updateTimestampLabelIndex();
             toolbarPanel.setValue(popupSnapshots.size());
 
             frame.repaint();
@@ -1002,6 +1012,7 @@ class ShenandoahVisualizer {
         public synchronized void stepForwardSnapshots(int n) {
             if (lastSnapshots.size() == 0) return;
 
+            int endBandIndex = (graphWidth - 50) / STEP_X;
             for (int i = 0; i < n; i++) {
                 if (endSnapshotIndex < lastSnapshots.size()) {
                     int index = Math.max(endSnapshotIndex, 0);
@@ -1022,12 +1033,12 @@ class ShenandoahVisualizer {
                     popupSnapshots.add(cur);
                     toolbarPanel.setValue(popupSnapshots.size());
                 }
-                setIndex();
+                updateTimestampLabelIndex();
                 data.setStopwatchTime(TimeUnit.MILLISECONDS.toNanos(snapshot.time()));
                 endSnapshotIndex++;
             }
 
-            while (endSnapshotIndex - frontSnapshotIndex > (graphWidth - 50) / STEP_X) {
+            while (endSnapshotIndex - frontSnapshotIndex > endBandIndex) {
                 frontSnapshotIndex++;
             }
 
@@ -1123,6 +1134,7 @@ class ShenandoahVisualizer {
                 g2.drawLine(bandWidth / 4, bandHeight + 5, bandWidth / 4, bandHeight + pad - 5);
                 g2.drawLine(bandWidth / 2, bandHeight + 5, bandWidth / 2, bandHeight + pad - 5);
                 g2.drawLine(bandWidth * 3 / 4, bandHeight + 5, bandWidth * 3 / 4, bandHeight + pad - 5);
+
                 g.drawString("-" + Long.toString(popupSnapshots.get(popupSnapshots.size() - 1).time() - popupSnapshots.get(frontSnapshotIndex).time()) + " ms", 3, bandHeight + 20);
                 if (x >= bandWidth / 4 && popupSnapshots.size() > oneFourthIndex) {
                     g.drawString("-" + Long.toString(popupSnapshots.get(popupSnapshots.size() - 1).time() - popupSnapshots.get(oneFourthIndex).time()) + " ms", bandWidth / 4 + 3, bandHeight + 20);
@@ -1133,6 +1145,7 @@ class ShenandoahVisualizer {
                 if (x >= bandWidth * 3 / 4 && popupSnapshots.size() > threeFourthIndex) {
                     g.drawString("-" + Long.toString(popupSnapshots.get(popupSnapshots.size() - 1).time() - popupSnapshots.get(threeFourthIndex).time()) + " ms", bandWidth * 3 / 4 + 3, bandHeight + 20);
                 }
+
             }
         }
 
