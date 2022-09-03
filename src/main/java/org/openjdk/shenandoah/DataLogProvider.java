@@ -157,7 +157,7 @@ public class DataLogProvider {
     }
 
     private String processLoggingTag(String data) {
-        if (data.lastIndexOf("[") != -1) {
+        if (data.lastIndexOf("]") != -1) {
             int startIndex = data.lastIndexOf("]") + 2;
             String newData = data.substring(startIndex);
             return newData;
