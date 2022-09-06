@@ -49,4 +49,19 @@ Add this additional flag to an active JVM running Shenandoah:
     $ java -jar visualizer.jar -logFile <file path>
 
 #### Visualizer User Interface
-Summary view on the right
+* **Graph (Orange box on the top)**: different displacements for different collector phases and a new timescale
+* **Region (Blue box in the middle)**: generates popup window with detailed information of chosen region and historical timeline of the states for that region
+* **Toolbar (Pink box in the bottom)**: buttons and slider to control the timeline and speed for the replay mode with keyboard shortcut 
+  * `space bar`: play/pause
+  * `up`: `+5` snapshots
+  * `down`: `-5` snapshots
+  * `left`: `-1` snapshot
+  * `right`: `+1` snapshot
+  * `enter`: reaches the last snapshot of the replay
+* **Summary view (Red box on the right)**: provides the total number of regions in each state
+
+![Sample Shenandoah Visualizer Screenshot](images/sample-usage-screenshot.png)
+
+Sample region popup window view
+
+<img src="images/sample-region-popup-screenshot.png" width="150">
