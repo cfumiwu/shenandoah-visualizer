@@ -156,7 +156,7 @@ public class DataLogProvider {
         return name != null && Files.isReadable(Paths.get(name));
     }
 
-    private String processLoggingTag(String data) {
+    String processLoggingTag(String data) {
         if (data.lastIndexOf("]") != -1) {
             int startIndex = data.lastIndexOf("]") + 2;
             String newData = data.substring(startIndex);
